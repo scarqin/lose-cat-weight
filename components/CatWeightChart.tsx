@@ -94,8 +94,6 @@ const CatWeightChart: React.FC<CatWeightChartProps> = ({
       }
     })];
     
-    const calorieInfo = ['-', ...weightPlans.map(plan => `${Math.round(plan.dailyCalories)}卡`)];
-    const statusInfo = ['开始', ...weightPlans.map(plan => plan.status)];
     
     return {
       labels,
@@ -163,7 +161,7 @@ const CatWeightChart: React.FC<CatWeightChartProps> = ({
             align: "start" as const,
             anchor: "end" as const,
             formatter: (value: number, context: any) => {
-              return `${value}g`;
+              return `${value}`;
             },
             font: {
               size: 10,
@@ -184,7 +182,7 @@ const CatWeightChart: React.FC<CatWeightChartProps> = ({
             anchor: "start" as const,
             formatter: (value: number, context: any) => {
               // 直接显示克数
-              return value > 0 ? `${value}g` : '';
+              return value > 0 ? `${value}` : '';
             },
             font: {
               size: 10,
@@ -326,7 +324,7 @@ const CatWeightChart: React.FC<CatWeightChartProps> = ({
       y: {
         title: {
           display: true,
-          text: '食物分配',
+          text: '干湿粮比例',
           padding: {top: 0, bottom: 10}
         },
         stacked: true,

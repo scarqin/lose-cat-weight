@@ -1,6 +1,27 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import {
+  WEIGHT_MULTIPLIER,
+  BASE_CALORIE_CONSTANT,
+  INITIAL_PHASE_RATIO,
+  MIDDLE_PHASE_RATIO,
+  FINAL_PHASE_RATIO,
+  DEFAULT_DRY_FOOD_CALORIES,
+  DEFAULT_WET_FOOD_CALORIES,
+  MAX_PLAN_WEEKS,
+  PHASE_DURATION_WEEKS,
+  PHASE_RATIO_DECREASE,
+  WET_FOOD_PACKAGE_SIZE,
+  MAX_WET_FOOD_RATIO,
+  MONTHS_TO_TRANSITION,
+  MONTHLY_WET_FOOD_INCREASE,
+  WEIGHT_STATUS,
+  WEIGHT_PHASE,
+  OVERWEIGHT_THRESHOLD,
+  NEAR_IDEAL_THRESHOLD,
+  calculateBaseCalories
+} from "../../constants/dietConstants";
 import { Button } from "@heroui/button";
 import { Input } from "@heroui/input";
 import CatWeightChart from "../../components/CatWeightChart";
@@ -51,36 +72,36 @@ export default function CatDietPlan() {
       name: newCat.name || `Meow`, // Default name if not provided
       currentWeight: parseFloat(newCat.currentWeight),
       targetWeight: 5, // 理想体重都是5kg
-      dryFoodCalories: parseFloat(newCat.dryFoodCalories || "3.7"),
-      wetFoodCalories: parseFloat(newCat.wetFoodCalories || "1.1")
+      dryFoodCalories: parseFloat(newCat.dryFoodCalories || DEFAULT_DRY_FOOD_CALORIES.toString()),
+      wetFoodCalories: parseFloat(newCat.wetFoodCalories || DEFAULT_WET_FOOD_CALORIES.toString())
     };
     
     setCats([...cats, cat]);
-    setNewCat({ name: "", currentWeight: "", dryFoodCalories: "3.7", wetFoodCalories: "1.1" });
+    setNewCat({ name: "", currentWeight: "", dryFoodCalories: DEFAULT_DRY_FOOD_CALORIES.toString(), wetFoodCalories: DEFAULT_WET_FOOD_CALORIES.toString() });
     setIsInitialView(false);
     setSelectedCatId(cat.id);
   };
 
   const calculateWeightPlan = (cat: Cat): WeightPlan[] => {
-    const baseCalories = cat.currentWeight * 30 + 80;
+    const baseCalories = calculateBaseCalories(cat.currentWeight);
     const totalWeightLoss = cat.currentWeight - cat.targetWeight;
     const plan: WeightPlan[] = [];
     
     let currentWeight = cat.currentWeight;
-    let currentRatio = 0.9;
+    let currentRatio = INITIAL_PHASE_RATIO;
     let week = 0;
     let currentDate = new Date(); // 从今天开始
     
-    while (currentWeight > cat.targetWeight && week < 52) { // 最多52周
+    while (currentWeight > cat.targetWeight && week < MAX_PLAN_WEEKS) { // 最多52周
       // 使用用户设置的减重速度 (0.5-2%/周)
       const weeklyWeightLossPercentage = weightLossRate / 100;
       const weeklyWeightLoss = Math.min(currentWeight * weeklyWeightLossPercentage, totalWeightLoss);
-      const targetWeight = Math.max(currentWeight - weeklyWeightLoss * 2, cat.targetWeight); // 2周为一个阶段
+      const targetWeight = Math.max(currentWeight - weeklyWeightLoss * PHASE_DURATION_WEEKS, cat.targetWeight); // 2周为一个阶段
       const dailyCalories = baseCalories * currentRatio;
       
       // 计算干粮和湿粮分配（逐渐从纯干粮转为半干半湿）
       const monthsElapsed = week / 4;
-      const wetFoodRatio = Math.min(monthsElapsed * 0.25, 0.5); // 4个月内逐渐增加到50%湿粮
+      const wetFoodRatio = Math.min(monthsElapsed * MONTHLY_WET_FOOD_INCREASE, MAX_WET_FOOD_RATIO); // 4个月内逐渐增加到50%湿粮
       const dryFoodRatio = 1 - wetFoodRatio;
       
       const dryFoodCaloriesPlan = dailyCalories * dryFoodRatio;
@@ -88,29 +109,29 @@ export default function CatDietPlan() {
       
       // 直接计算湿粮克数，而不是罐数
       let wetFoodGrams = wetFoodCaloriesPlan / cat.wetFoodCalories;
-      // 将湿粮克数调整为85g的整数倍
-      wetFoodGrams = Math.floor(wetFoodGrams / 85) * 85;
+      // 将湿粮克数调整为标准包装规格的整数倍
+      wetFoodGrams = Math.floor(wetFoodGrams / WET_FOOD_PACKAGE_SIZE) * WET_FOOD_PACKAGE_SIZE;
       // 如果有剩余热量，分配给干粮
       const remainingWetCalories = (wetFoodCaloriesPlan - wetFoodGrams * cat.wetFoodCalories);
       const dryFoodGrams = (dryFoodCaloriesPlan + remainingWetCalories) / cat.dryFoodCalories;
       
-      let phase = "初期";
-      if (currentRatio <= 0.8) phase = "中期";
-      if (currentRatio <= 0.7) phase = "后期";
+      let phase = WEIGHT_PHASE.INITIAL;
+      if (currentRatio <= MIDDLE_PHASE_RATIO) phase = WEIGHT_PHASE.MIDDLE;
+      if (currentRatio <= FINAL_PHASE_RATIO) phase = WEIGHT_PHASE.FINAL;
       
-      let status = "肥胖";
-      if (currentWeight <= cat.currentWeight * 0.9) status = "超重";
-      if (currentWeight <= cat.targetWeight * 1.1) status = "接近理想";
-      if (currentWeight <= cat.targetWeight) status = "理想体重";
+      let status = WEIGHT_STATUS.OBESE;
+      if (currentWeight <= cat.currentWeight * OVERWEIGHT_THRESHOLD) status = WEIGHT_STATUS.OVERWEIGHT;
+      if (currentWeight <= cat.targetWeight * NEAR_IDEAL_THRESHOLD) status = WEIGHT_STATUS.NEAR_IDEAL;
+      if (currentWeight <= cat.targetWeight) status = WEIGHT_STATUS.IDEAL;
       
       
       // 计算当前阶段的结束日期
       const endDate = new Date(currentDate);
-      endDate.setDate(endDate.getDate() + 14); // 两周后的日期
+      endDate.setDate(endDate.getDate() + (PHASE_DURATION_WEEKS * 7)); // 两周后的日期
       
       plan.push({
         phase,
-        weeks: 2,
+        weeks: PHASE_DURATION_WEEKS,
         date: new Date(currentDate), // 保存当前阶段的开始日期
         endDate: new Date(endDate), // 保存当前阶段的结束日期
         weightTarget: Math.round(targetWeight * 10) / 10,
@@ -123,8 +144,8 @@ export default function CatDietPlan() {
       });
       
       currentWeight = targetWeight;
-      currentRatio = Math.max(currentRatio - 0.05, 0.7); // 每2周减少0.05，最低0.7
-      week += 2;
+      currentRatio = Math.max(currentRatio - PHASE_RATIO_DECREASE, FINAL_PHASE_RATIO); // 每2周减少0.05，最低0.7
+      week += PHASE_DURATION_WEEKS;
       currentDate = new Date(endDate); // 更新当前日期为上一阶段的结束日期
       
       if (currentWeight <= cat.targetWeight) break;
