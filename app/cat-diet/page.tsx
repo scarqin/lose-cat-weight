@@ -270,7 +270,8 @@ export default function CatDietPlan() {
               <h2 className="text-xl font-bold">{selectedCat.name} 的减肥计划</h2>
               <Button 
                 size="sm" 
-                onClick={handleShare} 
+                data-html2canvas-ignore="true"
+                onPress={handleShare}   
                 disabled={isGeneratingImage}
                 className="flex gap-1 items-center"
               >
@@ -290,13 +291,18 @@ export default function CatDietPlan() {
                   </>
                 )}
               </Button>
+                </div>
+ <div className="flex gap-2 items-center text-sm sm:mt-0">
+              <Chip color="primary" variant="flat">
+              目标：{selectedCat.targetWeight}kg
+              </Chip>
+              <Chip color="success" variant="flat">
+              周期：{Math.ceil(weightPlan.length * 2 / 4)} 个月
+              </Chip>
             </div>
-            <div className="flex flex-wrap gap-2 items-center text-sm sm:mt-0 sm:text-base">
-              <Chip color="primary" variant="flat">目标：{selectedCat.targetWeight}kg</Chip>
-              <Chip color="success" variant="flat">周期：{Math.ceil(weightPlan.length * 2 / 4)} 个月</Chip>
             </div>
-          </div>
-
+           
+        
           {/* 减肥计划可视化图表 */}
           <CatWeightChart
             weightPlans={weightPlan}
