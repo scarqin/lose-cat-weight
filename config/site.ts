@@ -1,8 +1,8 @@
 export type SiteConfig = typeof siteConfig;
 
 export const siteConfig = {
-  name: "Next.js + HeroUI",
-  description: "Make beautiful websites regardless of your design experience.",
+  name: "Meow 老猫无痛减肥",
+  description: "科学制定猫咪减肥计划，让爱猫健康瘦身",
   navItems: [
   ],
   navMenuItems: [

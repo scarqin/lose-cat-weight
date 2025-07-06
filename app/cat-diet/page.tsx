@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { Button } from "@heroui/button";
 import { Input } from "@heroui/input";
+import CatWeightChart from "../../components/CatWeightChart";
 import { title } from "@/components/primitives";
 import { Switch } from "@heroui/switch";
 
@@ -15,7 +16,7 @@ interface Cat {
   wetFoodCalories: number;
 }
 
-interface WeightPlan {
+export interface WeightPlan {
   phase: string;
   weeks: number;
   weightTarget: number;
@@ -46,7 +47,7 @@ export default function CatDietPlan() {
     
     const cat: Cat = {
       id: Date.now(),
-      name: newCat.name || `猫咪${cats.length + 1}`, // Default name if not provided
+      name: newCat.name || `Meow`, // Default name if not provided
       currentWeight: parseFloat(newCat.currentWeight),
       targetWeight: 5, // 理想体重都是5kg
       dryFoodCalories: parseFloat(newCat.dryFoodCalories || "3.7"),
@@ -198,18 +199,18 @@ export default function CatDietPlan() {
   }, [selectedCatId, weightLossRate]);
 
   return (
-    <div className="container px-4 py-8 mx-auto max-w-6xl">
+    <div className="container px-4 mx-auto max-w-6xl">
       {isInitialView && (
-        <div className="mb-8 text-center">
-          <h1 className={title({ color: "violet" })}>🐱 老猫无痛减肥计划</h1>
-          <p className="mt-4 text-lg text-gray-600">科学制定猫咪减肥计划，让爱猫健康瘦身</p>
+        <div className="my-8 text-center">
+          <h1 className={title({ color: "violet" })}>🐱 老猫无痛减肥</h1>
+          <p className="mt-4 text-lg text-gray-600">科学制定减肥计划，一起守护老年猪咪</p>
         </div>
       )}
 
       {/* 初始视图 - 只显示体重输入 */}
       {isInitialView ? (
         <div className="p-6 mx-auto mb-8 max-w-md text-center rounded-lg shadow-lg">
-          <h2 className="mb-6 text-xl font-bold">输入猫咪体重开始制定减肥计划</h2>
+          <h2 className="mb-6 text-xl font-bold">输入猫咪体重</h2>
           <div className="mb-6">
             <Input
               label="猫咪体重 (kg)"
@@ -228,7 +229,7 @@ export default function CatDietPlan() {
         </div>
       ) : (
         <>
-          {/* 添加猫咪表单 */}
+          {/* 添加猫咪表单
           <div className="p-6 mb-8 rounded-lg shadow-lg">
             <div className="flex justify-between items-center mb-4">
               <h2 className="text-xl font-bold">添加猫咪信息</h2>
@@ -301,12 +302,12 @@ export default function CatDietPlan() {
             <Button color="primary" onClick={addCat} className="w-full md:w-auto">
               添加猫咪
             </Button>
-          </div>
+          </div> */}
         </>
       )}
 
       {/* 猫咪列表 */}
-      {cats.length > 0 && (
+      {/* {cats.length > 0 && (
         <div className="grid grid-cols-1 gap-4 mb-8 md:grid-cols-2 lg:grid-cols-3">
           {cats.map((cat) => {
             const weightStatus = getWeightStatus(cat.currentWeight, cat.targetWeight);
@@ -334,197 +335,14 @@ export default function CatDietPlan() {
             );
           })}
         </div>
-      )}
+      )} */}
 
-      {/* 猫咪体重状态表格 */}
-      {selectedCat && (
-        <div className="overflow-x-auto p-6 mb-8 rounded-lg shadow-lg">
-          <h2 className="mb-4 text-xl font-bold">猫咪体重状态参考表</h2>
-          <table className="w-full border-collapse">
-            <thead>
-              <tr className="bg-gray-100">
-                <th className="p-3 text-left border">体重不足</th>
-                <th className="p-3 text-left border">理想体重</th>
-                <th className="p-3 text-left border">超重</th>
-                <th className="p-3 text-left border">肥胖</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td className="p-3 align-top border">
-                  <div className="flex flex-col items-center mb-2">
-                    <svg width="80" height="50" viewBox="0 0 100 60" className="mb-2">
-                      <path d="M20,30 Q25,20 35,25 Q45,15 55,25 Q65,15 75,25 Q85,20 90,30 Q95,40 90,45 L85,50 Q80,55 75,50 L70,45 Q65,40 60,45 L55,50 Q50,55 45,50 L40,45 Q35,40 30,45 L25,50 Q20,55 15,50 L10,45 Q5,40 10,30 Z" fill="#FFD580" stroke="#000" strokeWidth="1" />
-                      <ellipse cx="35" cy="30" rx="3" ry="5" fill="#000" />
-                      <ellipse cx="65" cy="30" rx="3" ry="5" fill="#000" />
-                      <path d="M45,35 Q50,40 55,35" stroke="#000" strokeWidth="1" fill="none" />
-                      <path d="M10,30 L5,15" stroke="#000" strokeWidth="1" fill="none" />
-                      <path d="M90,30 L95,15" stroke="#000" strokeWidth="1" fill="none" />
-                    </svg>
-                    <span className="text-sm font-medium">体重不足</span>
-                  </div>
-                </td>
-                <td className="p-3 align-top border">
-                  <div className="flex flex-col items-center mb-2">
-                    <svg width="80" height="50" viewBox="0 0 100 60" className="mb-2">
-                      <path d="M20,30 Q25,20 35,25 Q45,15 55,25 Q65,15 75,25 Q85,20 90,30 Q95,40 90,45 L85,50 Q80,55 75,50 L70,45 Q65,40 60,45 L55,50 Q50,55 45,50 L40,45 Q35,40 30,45 L25,50 Q20,55 15,50 L10,45 Q5,40 10,30 Z" fill="#FFD580" stroke="#000" strokeWidth="1" />
-                      <ellipse cx="35" cy="30" rx="3" ry="5" fill="#000" />
-                      <ellipse cx="65" cy="30" rx="3" ry="5" fill="#000" />
-                      <path d="M45,35 Q50,40 55,35" stroke="#000" strokeWidth="1" fill="none" />
-                      <path d="M10,30 L5,15" stroke="#000" strokeWidth="1" fill="none" />
-                      <path d="M90,30 L95,15" stroke="#000" strokeWidth="1" fill="none" />
-                    </svg>
-                    <span className="text-sm font-medium">理想体重</span>
-                  </div>
-                </td>
-                <td className="p-3 align-top border">
-                  <div className="flex flex-col items-center mb-2">
-                    <svg width="80" height="50" viewBox="0 0 100 60" className="mb-2">
-                      <path d="M15,30 Q20,15 35,20 Q45,10 55,20 Q65,10 75,20 Q90,15 95,30 Q100,45 95,50 L90,55 Q85,60 80,55 L75,50 Q70,45 65,50 L60,55 Q55,60 50,55 L45,50 Q40,45 35,50 L30,55 Q25,60 20,55 L15,50 Q10,45 15,30 Z" fill="#FFD580" stroke="#000" strokeWidth="1" />
-                      <ellipse cx="35" cy="30" rx="3" ry="5" fill="#000" />
-                      <ellipse cx="65" cy="30" rx="3" ry="5" fill="#000" />
-                      <path d="M45,38 Q50,43 55,38" stroke="#000" strokeWidth="1" fill="none" />
-                      <path d="M15,30 L10,15" stroke="#000" strokeWidth="1" fill="none" />
-                      <path d="M95,30 L100,15" stroke="#000" strokeWidth="1" fill="none" />
-                    </svg>
-                    <span className="text-sm font-medium">超重</span>
-                  </div>
-                </td>
-                <td className="p-3 align-top border">
-                  <div className="flex flex-col items-center mb-2">
-                    <svg width="80" height="50" viewBox="0 0 100 60" className="mb-2">
-                      <path d="M10,30 Q15,10 35,15 Q45,5 55,15 Q65,5 75,15 Q95,10 100,30 Q105,50 100,55 L95,60 Q90,65 85,60 L80,55 Q75,50 70,55 L65,60 Q60,65 55,60 L50,55 Q45,50 40,55 L35,60 Q30,65 25,60 L20,55 Q15,50 10,30 Z" fill="#FFD580" stroke="#000" strokeWidth="1" />
-                      <ellipse cx="35" cy="30" rx="3" ry="5" fill="#000" />
-                      <ellipse cx="65" cy="30" rx="3" ry="5" fill="#000" />
-                      <path d="M45,40 Q50,45 55,40" stroke="#000" strokeWidth="1" fill="none" />
-                      <path d="M10,30 L5,15" stroke="#000" strokeWidth="1" fill="none" />
-                      <path d="M100,30 L105,15" stroke="#000" strokeWidth="1" fill="none" />
-                    </svg>
-                    <span className="text-sm font-medium">肥胖</span>
-                  </div>
-                </td>
-              </tr>
-              <tr>
-                <td className="p-3 border">
-                  <p className="mb-1 font-medium">肋骨</p>
-                  <p className="text-sm">肋骨清晰可见，几乎无脂肪覆盖</p>
-                </td>
-                <td className="p-3 border">
-                  <p className="mb-1 font-medium">肋骨</p>
-                  <p className="text-sm">肋骨被薄薄脂肪覆盖，容易触摸</p>
-                </td>
-                <td className="p-3 border">
-                  <p className="mb-1 font-medium">肋骨</p>
-                  <p className="text-sm">肋骨被适度脂肪覆盖，不易触摸</p>
-                </td>
-                <td className="p-3 border">
-                  <p className="mb-1 font-medium">肋骨</p>
-                  <p className="text-sm">肋骨被厚厚的脂肪覆盖，难以触摸到</p>
-                </td>
-              </tr>
-              <tr>
-                <td className="p-3 border">
-                  <p className="mb-1 font-medium">从上方观察</p>
-                  <p className="text-sm">腰部突出明显</p>
-                </td>
-                <td className="p-3 border">
-                  <p className="mb-1 font-medium">从上方观察</p>
-                  <p className="text-sm">腰部明显但不突出</p>
-                </td>
-                <td className="p-3 border">
-                  <p className="mb-1 font-medium">从上方观察</p>
-                  <p className="text-sm">腰部不明显，背部略微宽阔</p>
-                </td>
-                <td className="p-3 border">
-                  <p className="mb-1 font-medium">从上方观察</p>
-                  <p className="text-sm">腰部不明显，背部极度宽阔</p>
-                </td>
-              </tr>
-              <tr>
-                <td className="p-3 border">
-                  <p className="mb-1 font-medium">从侧面观察</p>
-                  <p className="text-sm">腹部凹陷明显，几乎无腹部脂肪</p>
-                </td>
-                <td className="p-3 border">
-                  <p className="mb-1 font-medium">从侧面观察</p>
-                  <p className="text-sm">腹部轮廓明显，有轻微腹部脂肪</p>
-                </td>
-                <td className="p-3 border">
-                  <p className="mb-1 font-medium">从侧面观察</p>
-                  <p className="text-sm">腹部轮廓不明显，脂肪可能覆盖尾巴根部</p>
-                </td>
-                <td className="p-3 border">
-                  <p className="mb-1 font-medium">从侧面观察</p>
-                  <p className="text-sm">腹部圆润突出，厚脂肪覆盖尾巴根部</p>
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      )}
 
       {/* 减肥计划详情 - 表格布局 */}
       {selectedCat && weightPlan.length > 0 && (
         <div className="overflow-x-auto p-6 rounded-lg shadow-lg">
           <h2 className="mb-4 text-xl font-bold">{selectedCat.name} 的减肥计划</h2>
-          
-          <table className="w-full border-collapse">
-            <thead>
-              <tr className="bg-gray-100">
-                <th className="p-3 border">阶段</th>
-                <th className="p-3 border">周数</th>
-                <th className="p-3 border">目标体重</th>
-                <th className="p-3 border">每日热量</th>
-                <th className="p-3 border">干粮 (g)</th>
-                <th className="p-3 border">罐头 (罐)</th>
-                <th className="p-3 border">体重状态</th>
-                <th className="p-3 border">建议</th>
-              </tr>
-            </thead>
-            <tbody>
-              {weightPlan.map((phase, index) => (
-                <tr key={index} className={index % 2 === 0 ? 'bg-gray-50' : 'bg-white'}>
-                  <td className="p-3 font-medium border">{phase.phase}</td>
-                  <td className="p-3 text-center border">{index * 2 + 1}-{index * 2 + 2}</td>
-                  <td className="p-3 font-medium text-center text-blue-600 border">{phase.weightTarget} kg</td>
-                  <td className="p-3 border">
-                    <div className="text-center">
-                      <div className="font-medium text-green-600">{phase.dailyCalories} 卡</div>
-                      <div className="text-xs text-gray-500">({(phase.calorieRatio * 100).toFixed(0)}% 基础热量)</div>
-                    </div>
-                  </td>
-                  <td className="p-3 font-medium text-center text-orange-600 border">{phase.dryFoodGrams}</td>
-                  <td className="p-3 border">
-                    <div className="text-center">
-                      <div className="font-medium text-purple-600">{phase.wetFoodCans}</div>
-                      <div className="text-xs text-gray-500">(85g/罐)</div>
-                    </div>
-                  </td>
-                  <td className="p-3 border">
-                    <span className={`px-2 py-1 rounded-full text-xs font-medium ${
-                      phase.status === '肥胖' ? 'bg-red-100 text-red-800' :
-                      phase.status === '超重' ? 'bg-yellow-100 text-yellow-800' :
-                      phase.status === '接近理想' ? 'bg-blue-100 text-blue-800' :
-                      'bg-green-100 text-green-800'
-                    }`}>
-                      {phase.status}
-                    </span>
-                  </td>
-                  <td className="p-3 border">
-                    <details className="text-sm">
-                      <summary className="text-blue-600 cursor-pointer hover:text-blue-800">查看建议</summary>
-                      <ul className="pl-4 mt-2 space-y-1 text-gray-700">
-                        {phase.exerciseRecommendations.slice(0, 3).map((recommendation, idx) => (
-                          <li key={idx}>• {recommendation}</li>
-                        ))}
-                      </ul>
-                    </details>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-          
+{/*           
           <div className="p-4 mt-6 bg-green-50 rounded-lg">
             <h3 className="mb-2 font-bold text-green-800">🎯 减肥成功指标</h3>
             <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
@@ -537,7 +355,14 @@ export default function CatDietPlan() {
                 <li>• 重要提醒：如减重过快或猫咪出现异常，请及时咨询兽医</li>
               </ul>
             </div>
-          </div>
+          </div> */}
+          
+          {/* 减肥计划可视化图表 */}
+          <CatWeightChart 
+            weightPlans={weightPlan} 
+            currentWeight={selectedCat.currentWeight} 
+            targetWeight={selectedCat.targetWeight} 
+          />
         </div>
       )}
 
