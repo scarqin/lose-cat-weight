@@ -204,19 +204,31 @@ const CatWeightChart: React.FC<CatWeightChartProps> = ({
   // 图表配置
   const weightChartOptions = {
     responsive: true,
+    maintainAspectRatio: false, // 允许图表自适应容器高度
     plugins: {
       legend: {
         position: 'top' as const,
+        labels: {
+          boxWidth: 12,
+          padding: 10,
+          font: {
+            size: (window.innerWidth < 768) ? 10 : 12
+          }
+        }
       },
       title: {
         display: true,
         text: '体重变化趋势',
         font: {
-          size: 16
+          size: (window.innerWidth < 768) ? 14 : 16
+        },
+        padding: {
+          top: 10,
+          bottom: 10
         }
       },
       tooltip: {
-        enabled: true, // 保留tooltip但添加直接显示的标签
+        enabled: true,
         callbacks: {
           label: function(context: any) {
             const index = context.dataIndex;
@@ -236,38 +248,55 @@ const CatWeightChart: React.FC<CatWeightChartProps> = ({
         }
       },
       datalabels: {
-        display: function(context) {
-          // 只显示第一个数据集的标签
+        display: function(context: any) {
+          // 在移动设备上隐藏部分标签以避免拥挤
+          if (window.innerWidth < 768) {
+            // 在移动设备上只显示部分关键点的标签
+            const index = context.dataIndex;
+            return context.datasetIndex === 0 && (index === 0 || index === weightPlans.length || index % 3 === 0);
+          }
+          // 桌面设备显示所有标签
           return context.datasetIndex === 0;
         },
         color: 'black',
         align: "end" as const,
         offset: 10,
-        clamp: true
+        clamp: true,
+        font: {
+          size: (window.innerWidth < 768) ? 9 : 10,
+          weight: 'bold' as const
+        }
       }
     },
     scales: {
       y: {
         title: {
-          display: true,
+          display: window.innerWidth >= 768, // 在移动设备上隐藏轴标题
           text: '体重 (kg)',
-          padding: {top: 0, bottom: 10}
+          padding: {top: 0, bottom: 10},
+          font: {
+            size: (window.innerWidth < 768) ? 10 : 12
+          }
         },
         min: Math.floor(Math.min(targetWeight * 0.95, ...weightPlans.map(p => p.weightTarget))),
         max: Math.ceil(currentWeight * 1.05),
         ticks: {
-          padding: 10,
+          padding: 5,
           font: {
-            size: 11
-          }
+            size: (window.innerWidth < 768) ? 9 : 11
+          },
+          maxTicksLimit: (window.innerWidth < 768) ? 5 : 8 // 在移动设备上减少刻度数量
         }
       },
       x: {
         ticks: {
-          padding: 10,
+          padding: 5,
           font: {
-            size: 11
-          }
+            size: (window.innerWidth < 768) ? 9 : 11
+          },
+          maxRotation: (window.innerWidth < 768) ? 45 : 0, // 在移动设备上旋转标签
+          autoSkip: true,
+          maxTicksLimit: (window.innerWidth < 768) ? 6 : 10 // 在移动设备上减少显示的标签数量
         }
       }
     }
@@ -275,19 +304,31 @@ const CatWeightChart: React.FC<CatWeightChartProps> = ({
   
   const foodChartOptions = {
     responsive: true,
+    maintainAspectRatio: false, // 允许图表自适应容器高度
     plugins: {
       legend: {
         position: 'top' as const,
+        labels: {
+          boxWidth: 12,
+          padding: 8,
+          font: {
+            size: (window.innerWidth < 768) ? 10 : 12
+          }
+        }
       },
       title: {
         display: true,
         text: '食物分配',
         font: {
-          size: 16
+          size: (window.innerWidth < 768) ? 14 : 16
+        },
+        padding: {
+          top: 10,
+          bottom: 10
         }
       },
       tooltip: {
-        enabled: true, // 保留tooltip但添加直接显示的标签
+        enabled: true,
         callbacks: {
           label: function(context: any) {
             const index = context.dataIndex;
@@ -302,43 +343,61 @@ const CatWeightChart: React.FC<CatWeightChartProps> = ({
         }
       },
       datalabels: {
-        display: true,
+        display: function(context: any) {
+          // 在移动设备上隐藏部分标签以避免拥挤
+          if (window.innerWidth < 768) {
+            const index = context.dataIndex;
+            return index % 3 === 0; // 在移动设备上只显示每第三个数据点的标签
+          }
+          return true; // 桌面设备显示所有标签
+        },
         color: 'black',
         clamp: true,
         // 交错显示标签位置，避免重叠
-        align: function(context) {
+        align: function(context: any) {
           const index = context.dataIndex;
           return index % 2 === 0 ? 'end' : 'start';
         },
-        anchor: function(context) {
+        anchor: function(context: any) {
           const index = context.dataIndex;
           return index % 2 === 0 ? 'end' : 'start';
         },
-        offset: 8
+        offset: 8,
+        font: {
+          size: (window.innerWidth < 768) ? 9 : 10,
+          weight: 'bold' as const
+        }
       }
     },
     scales: {
       y: {
         title: {
-          display: true,
+          display: window.innerWidth >= 768, // 在移动设备上隐藏轴标题
           text: '干湿粮比例',
-          padding: {top: 0, bottom: 10}
+          padding: {top: 0, bottom: 10},
+          font: {
+            size: (window.innerWidth < 768) ? 10 : 12
+          }
         },
         stacked: true,
         ticks: {
-          padding: 10,
+          padding: 5,
           font: {
-            size: 11
-          }
+            size: (window.innerWidth < 768) ? 9 : 11
+          },
+          maxTicksLimit: (window.innerWidth < 768) ? 5 : 8 // 在移动设备上减少刻度数量
         }
       },
       x: {
         stacked: true,
         ticks: {
-          padding: 10,
+          padding: 5,
           font: {
-            size: 11
-          }
+            size: (window.innerWidth < 768) ? 9 : 11
+          },
+          maxRotation: (window.innerWidth < 768) ? 45 : 0, // 在移动设备上旋转标签
+          autoSkip: true,
+          maxTicksLimit: (window.innerWidth < 768) ? 6 : 10 // 在移动设备上减少显示的标签数量
         }
       }
     }
@@ -347,16 +406,42 @@ const CatWeightChart: React.FC<CatWeightChartProps> = ({
   
   // 移除计算热量的代码，已移至 WeightLossGuide 组件
 
+  // 添加窗口大小变化监听，以便在设备旋转或调整大小时重新渲染图表
+  React.useEffect(() => {
+    const handleResize = () => {
+      // 强制重新渲染组件
+      // 这里我们只是设置一个状态来触发重新渲染
+      // 实际上不需要做任何事情，因为我们在图表选项中使用了 window.innerWidth
+      const chart = ChartJS.getChart('weight-chart');
+      if (chart) {
+        chart.update();
+      }
+      const foodChart = ChartJS.getChart('food-chart');
+      if (foodChart) {
+        foodChart.update();
+      }
+    };
+
+    window.addEventListener('resize', handleResize);
+    return () => {
+      window.removeEventListener('resize', handleResize);
+    };
+  }, []);
+
   return (
     <div className="mt-8 space-y-10">
       {/* 图表区块 */}
       <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
         <div className="p-4 bg-white rounded-lg shadow-md">
-          <Line data={prepareWeightChartData()} options={weightChartOptions} />
+          <div style={{ height: window.innerWidth < 768 ? '250px' : '300px' }}>
+            <Line id="weight-chart" data={prepareWeightChartData()} options={weightChartOptions} />
+          </div>
         </div>
         
         <div className="p-4 bg-white rounded-lg shadow-md">
-          <Bar data={prepareFoodChartData()} options={foodChartOptions} />
+          <div style={{ height: window.innerWidth < 768 ? '250px' : '300px' }}>
+            <Bar id="food-chart" data={prepareFoodChartData()} options={foodChartOptions} />
+          </div>
         </div>
       </div>
     </div>
