@@ -193,6 +193,7 @@ export default function CatDietPlan() {
               placeholder="例如：7.5"
               type="number"
               step="0.1"
+              autoFocus
               size="lg"
               value={newCat.currentWeight}
               onChange={(e) => setNewCat({...newCat, currentWeight: e.target.value})}
@@ -228,7 +229,7 @@ export default function CatDietPlan() {
           />
         </div>
       )}
-      {selectedCat && <WeightLossGuide currentWeight={selectedCat.currentWeight} />}
+      {selectedCat && <WeightLossGuide currentWeight={selectedCat.currentWeight} weightPlans={weightPlan} />}
 
       {cats.length === 0 && !isInitialView && (
         <div className="py-12 text-center">

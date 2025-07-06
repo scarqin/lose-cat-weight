@@ -7,8 +7,10 @@ import {
   FINAL_PHASE_RATIO,
   MIN_WEEKLY_WEIGHT_LOSS_PERCENTAGE,
   MAX_WEEKLY_WEIGHT_LOSS_PERCENTAGE,
-  calculateBaseCalories
+  calculateBaseCalories,
+  WEIGHT_PHASE
 } from '../constants/dietConstants';
+import { WeightPlan } from '../app/cat-diet/page';
 
 interface WeightLossGuideProps {
   currentWeight: number;
@@ -16,6 +18,7 @@ interface WeightLossGuideProps {
   middleWeightChange?: number;
   finalWeightChange?: number;
   targetWeight?: number;
+  weightPlans?: WeightPlan[];
 }
 
 const WeightLossGuide: React.FC<WeightLossGuideProps> = ({ 
@@ -23,7 +26,8 @@ const WeightLossGuide: React.FC<WeightLossGuideProps> = ({
   initialWeightChange,
   middleWeightChange,
   finalWeightChange,
-  targetWeight
+  targetWeight,
+  weightPlans = []
 }) => {
   // 计算猫咪所需热量和减肥阶段热量
   const baseCalories = Math.round(calculateBaseCalories(currentWeight));
@@ -35,10 +39,28 @@ const WeightLossGuide: React.FC<WeightLossGuideProps> = ({
   const minWeeklyLoss = Math.round(currentWeight * 1000 * MIN_WEEKLY_WEIGHT_LOSS_PERCENTAGE / 100);
   const maxWeeklyLoss = Math.round(currentWeight * 1000 * MAX_WEEKLY_WEIGHT_LOSS_PERCENTAGE / 100);
   
-  // 如果没有提供体重变化数据，则计算理想的体重变化值
-  const calculatedInitialWeightChange = initialWeightChange !== undefined ? initialWeightChange : Math.round((minWeeklyLoss + maxWeeklyLoss) / 2);
-  const calculatedMiddleWeightChange = middleWeightChange !== undefined ? middleWeightChange : Math.round((minWeeklyLoss + maxWeeklyLoss) / 2);
-  const calculatedFinalWeightChange = finalWeightChange !== undefined ? finalWeightChange : Math.round((minWeeklyLoss + maxWeeklyLoss) / 2);
+  // 计算各阶段平均体重变化
+  const calculateAverageWeightChange = (phase: string) => {
+    if (!weightPlans || weightPlans.length === 0) {
+      return Math.round((minWeeklyLoss + maxWeeklyLoss) / 2);
+    }
+    
+    const phasePlans = weightPlans.filter(plan => plan.phase === phase);
+    if (phasePlans.length === 0) {
+      return Math.round((minWeeklyLoss + maxWeeklyLoss) / 2);
+    }
+    
+    const totalWeightChange = phasePlans.reduce((sum, plan) => sum + plan.weightChangeGramsPerWeek, 0);
+    return Math.round(totalWeightChange / phasePlans.length);
+  };
+  
+  // 如果没有提供体重变化数据，则计算理想的体重变化值或从计划中获取平均值
+  const calculatedInitialWeightChange = initialWeightChange !== undefined ? initialWeightChange : 
+    calculateAverageWeightChange(WEIGHT_PHASE.INITIAL);
+  const calculatedMiddleWeightChange = middleWeightChange !== undefined ? middleWeightChange : 
+    calculateAverageWeightChange(WEIGHT_PHASE.MIDDLE);
+  const calculatedFinalWeightChange = finalWeightChange !== undefined ? finalWeightChange : 
+    calculateAverageWeightChange(WEIGHT_PHASE.FINAL);
   
   return (
     <div className="p-6 mt-8 bg-gray-50 rounded-xl shadow-md">
@@ -112,31 +134,34 @@ const WeightLossGuide: React.FC<WeightLossGuideProps> = ({
               <div className="p-3 bg-gray-50 rounded-lg border border-gray-100">
                 <div className="flex justify-between items-center">
                   <span className="text-sm font-medium text-gray-700">初期体重变化</span>
-                  <span className="font-medium text-green-700">{calculatedInitialWeightChange} g</span>
+                  <span className="font-medium text-green-700">{calculatedInitialWeightChange} g/周</span>
                 </div>
                 <div className="mt-2 w-full bg-gray-200 rounded-full h-1.5">
                   <div className="bg-green-600 h-1.5 rounded-full" style={{ width: `${Math.min(100, Math.max(0, (calculatedInitialWeightChange / maxWeeklyLoss) * 100))}%` }}></div>
                 </div>
+                <p className="mt-1 text-xs text-gray-500">平均每周减重 {(calculatedInitialWeightChange / (currentWeight * 1000) * 100).toFixed(2)}%</p>
               </div>
               
               <div className="p-3 bg-gray-50 rounded-lg border border-gray-100">
                 <div className="flex justify-between items-center">
                   <span className="text-sm font-medium text-gray-700">中期体重变化</span>
-                  <span className="font-medium text-green-700">{calculatedMiddleWeightChange} g</span>
+                  <span className="font-medium text-green-700">{calculatedMiddleWeightChange} g/周</span>
                 </div>
                 <div className="mt-2 w-full bg-gray-200 rounded-full h-1.5">
                   <div className="bg-green-600 h-1.5 rounded-full" style={{ width: `${Math.min(100, Math.max(0, (calculatedMiddleWeightChange / maxWeeklyLoss) * 100))}%` }}></div>
                 </div>
+                <p className="mt-1 text-xs text-gray-500">平均每周减重 {(calculatedMiddleWeightChange / (currentWeight * 1000) * 100).toFixed(2)}%</p>
               </div>
               
               <div className="p-3 bg-gray-50 rounded-lg border border-gray-100">
                 <div className="flex justify-between items-center">
                   <span className="text-sm font-medium text-gray-700">后期体重变化</span>
-                  <span className="font-medium text-green-700">{calculatedFinalWeightChange} g</span>
+                  <span className="font-medium text-green-700">{calculatedFinalWeightChange} g/周</span>
                 </div>
                 <div className="mt-2 w-full bg-gray-200 rounded-full h-1.5">
                   <div className="bg-green-600 h-1.5 rounded-full" style={{ width: `${Math.min(100, Math.max(0, (calculatedFinalWeightChange / maxWeeklyLoss) * 100))}%` }}></div>
                 </div>
+                <p className="mt-1 text-xs text-gray-500">平均每周减重 {(calculatedFinalWeightChange / (currentWeight * 1000) * 100).toFixed(2)}%</p>
               </div>
             </div>
           </div>
