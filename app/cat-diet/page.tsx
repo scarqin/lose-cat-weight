@@ -60,7 +60,6 @@ export default function CatDietPlan() {
     wetFoodCalories: "1.1"
   });
   const [selectedCatId, setSelectedCatId] = useState<number | null>(null);
-  const [showAdvancedOptions, setShowAdvancedOptions] = useState(false);
   const [weightLossRate, setWeightLossRate] = useState(1.5); // Default 1.5% per week
   const [isInitialView, setIsInitialView] = useState(true);
 

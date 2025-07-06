@@ -15,13 +15,15 @@ interface WeightLossGuideProps {
   initialWeightChange?: number;
   middleWeightChange?: number;
   finalWeightChange?: number;
+  targetWeight?: number;
 }
 
 const WeightLossGuide: React.FC<WeightLossGuideProps> = ({ 
   currentWeight,
-  initialWeightChange = 0,
-  middleWeightChange = 0,
-  finalWeightChange = 0
+  initialWeightChange,
+  middleWeightChange,
+  finalWeightChange,
+  targetWeight
 }) => {
   // 计算猫咪所需热量和减肥阶段热量
   const baseCalories = Math.round(calculateBaseCalories(currentWeight));
@@ -32,6 +34,11 @@ const WeightLossGuide: React.FC<WeightLossGuideProps> = ({
   // 计算理想减重范围（每周0.5-2%）
   const minWeeklyLoss = Math.round(currentWeight * 1000 * MIN_WEEKLY_WEIGHT_LOSS_PERCENTAGE / 100);
   const maxWeeklyLoss = Math.round(currentWeight * 1000 * MAX_WEEKLY_WEIGHT_LOSS_PERCENTAGE / 100);
+  
+  // 如果没有提供体重变化数据，则计算理想的体重变化值
+  const calculatedInitialWeightChange = initialWeightChange !== undefined ? initialWeightChange : Math.round((minWeeklyLoss + maxWeeklyLoss) / 2);
+  const calculatedMiddleWeightChange = middleWeightChange !== undefined ? middleWeightChange : Math.round((minWeeklyLoss + maxWeeklyLoss) / 2);
+  const calculatedFinalWeightChange = finalWeightChange !== undefined ? finalWeightChange : Math.round((minWeeklyLoss + maxWeeklyLoss) / 2);
   
   return (
     <div className="p-6 mt-8 bg-gray-50 rounded-xl shadow-md">
@@ -105,30 +112,30 @@ const WeightLossGuide: React.FC<WeightLossGuideProps> = ({
               <div className="p-3 bg-gray-50 rounded-lg border border-gray-100">
                 <div className="flex justify-between items-center">
                   <span className="text-sm font-medium text-gray-700">初期体重变化</span>
-                  <span className="font-medium text-green-700">{initialWeightChange} g</span>
+                  <span className="font-medium text-green-700">{calculatedInitialWeightChange} g</span>
                 </div>
                 <div className="mt-2 w-full bg-gray-200 rounded-full h-1.5">
-                  <div className="bg-green-600 h-1.5 rounded-full" style={{ width: `${Math.min(100, Math.max(0, (initialWeightChange / maxWeeklyLoss) * 100))}%` }}></div>
+                  <div className="bg-green-600 h-1.5 rounded-full" style={{ width: `${Math.min(100, Math.max(0, (calculatedInitialWeightChange / maxWeeklyLoss) * 100))}%` }}></div>
                 </div>
               </div>
               
               <div className="p-3 bg-gray-50 rounded-lg border border-gray-100">
                 <div className="flex justify-between items-center">
                   <span className="text-sm font-medium text-gray-700">中期体重变化</span>
-                  <span className="font-medium text-green-700">{middleWeightChange} g</span>
+                  <span className="font-medium text-green-700">{calculatedMiddleWeightChange} g</span>
                 </div>
                 <div className="mt-2 w-full bg-gray-200 rounded-full h-1.5">
-                  <div className="bg-green-600 h-1.5 rounded-full" style={{ width: `${Math.min(100, Math.max(0, (middleWeightChange / maxWeeklyLoss) * 100))}%` }}></div>
+                  <div className="bg-green-600 h-1.5 rounded-full" style={{ width: `${Math.min(100, Math.max(0, (calculatedMiddleWeightChange / maxWeeklyLoss) * 100))}%` }}></div>
                 </div>
               </div>
               
               <div className="p-3 bg-gray-50 rounded-lg border border-gray-100">
                 <div className="flex justify-between items-center">
                   <span className="text-sm font-medium text-gray-700">后期体重变化</span>
-                  <span className="font-medium text-green-700">{finalWeightChange} g</span>
+                  <span className="font-medium text-green-700">{calculatedFinalWeightChange} g</span>
                 </div>
                 <div className="mt-2 w-full bg-gray-200 rounded-full h-1.5">
-                  <div className="bg-green-600 h-1.5 rounded-full" style={{ width: `${Math.min(100, Math.max(0, (finalWeightChange / maxWeeklyLoss) * 100))}%` }}></div>
+                  <div className="bg-green-600 h-1.5 rounded-full" style={{ width: `${Math.min(100, Math.max(0, (calculatedFinalWeightChange / maxWeeklyLoss) * 100))}%` }}></div>
                 </div>
               </div>
             </div>
@@ -151,7 +158,7 @@ const WeightLossGuide: React.FC<WeightLossGuideProps> = ({
               <h4 className="mb-2 font-medium text-amber-800">食物能量密度</h4>
               <div className="flex justify-between items-center mb-2">
                 <span className="text-sm font-medium text-gray-700">干粮能量密度</span>
-                <span className="font-medium text-amber-700">3.5 -4 Kcal/g</span>
+                <span className="font-medium text-amber-700">3.5-4 Kcal/g</span>
               </div>
               <div className="flex justify-between items-center">
                 <span className="text-sm font-medium text-gray-700">湿粮能量密度</span>

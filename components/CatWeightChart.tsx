@@ -285,22 +285,13 @@ const CatWeightChart: React.FC<CatWeightChartProps> = ({
         callbacks: {
           label: function(context: any) {
             const index = context.dataIndex;
-            const datasetIndex = context.datasetIndex;
             const plan = weightPlans[index];
-            
-            if (datasetIndex === 0) {
               return [
-                `干粮: ${plan.dryFoodGrams}g`,
                 `阶段: ${plan.phase}`,
-                `热量: ${Math.round(plan.dryFoodGrams * plan.calorieRatio)}`
+                ...(plan.dryFoodGrams > 0 ? [`干粮: ${plan.dryFoodGrams}g`] : []),
+                ...(plan.wetFoodGrams > 0 ? [`湿粮: ${plan.wetFoodGrams}g`] : []),
+                `热量: ${Math.round(plan.dryFoodGrams * 3.7)+Math.round(plan.wetFoodGrams * 1.1)}g`
               ];
-            } else {
-              return [
-                `湿粮: ${plan.wetFoodGrams}g`,
-                `阶段: ${plan.phase}`,
-                `热量: ${Math.round(plan.wetFoodGrams * 1.1)}`
-              ];
-            }
           }
         }
       },
