@@ -11,6 +11,8 @@ import {
   Legend,
   Filler
 } from 'chart.js';
+import annotationPlugin from 'chartjs-plugin-annotation';
+import datalabelsPlugin from 'chartjs-plugin-datalabels';
 import { Line, Bar } from 'react-chartjs-2';
 import { WeightPlan } from '../app/cat-diet/page';
 
@@ -24,7 +26,9 @@ ChartJS.register(
   Title,
   Tooltip,
   Legend,
-  Filler
+  Filler,
+  annotationPlugin,
+  datalabelsPlugin
 );
 
 // 定义图表颜色
@@ -50,11 +54,15 @@ const CatWeightChart: React.FC<CatWeightChartProps> = ({
 }) => {
   // 准备体重变化图表数据
   const prepareWeightChartData = () => {
-    const labels = weightPlans.map((plan, index) => `第${(index + 1) * 2}周`);
+    // 使用日期而不是周数
+    const labels = weightPlans.map((plan) => {
+      const date = plan.date;
+      return `${date.getMonth() + 1}/${date.getDate()}`;
+    });
     
     // 添加起始体重
     const weights = [currentWeight, ...weightPlans.map(plan => plan.weightTarget)];
-    labels.unshift('开始');
+    labels.unshift('今天');
     
     // 确定每个点的阶段颜色
     const backgroundColors = weightPlans.map(plan => {
@@ -67,6 +75,19 @@ const CatWeightChart: React.FC<CatWeightChartProps> = ({
     });
     // 添加起始点颜色
     backgroundColors.unshift(chartColors.initial);
+    
+    // 准备阶段图标和热量信息
+    const phaseIcons = ['🔍', ...weightPlans.map(plan => {
+      switch(plan.phase) {
+        case '初期': return ''; // 初期
+        case '中期': return ''; // 中期
+        case '后期': return ''; // 后期
+        default: return '🔍';
+      }
+    })];
+    
+    const calorieInfo = ['-', ...weightPlans.map(plan => `${Math.round(plan.dailyCalories)}卡`)];
+    const statusInfo = ['开始', ...weightPlans.map(plan => plan.status)];
     
     return {
       labels,
@@ -81,23 +102,37 @@ const CatWeightChart: React.FC<CatWeightChartProps> = ({
           pointRadius: 6,
           tension: 0.1,
           fill: false,
+          // 添加数据标签配置
+          datalabels: {
+            align: "top" as const,
+            anchor: "end" as const,
+            offset: 10,
+            formatter: (value: number, context: any) => {
+              const index = context.dataIndex;
+              const plan = weightPlans[index - 1]; // 减1是因为我们添加了起始点
+              return `${phaseIcons[index]} ${value}`;
+            },
+            font: {
+              size: 10,
+              weight: 'bold'
+            },
+            color: 'rgba(0, 0, 0, 0.8)',
+            backgroundColor: 'rgba(255, 255, 255, 0.85)',
+            borderRadius: 4,
+            padding: 3
+          }
         },
-        {
-          label: '目标体重',
-          data: Array(labels.length).fill(targetWeight),
-          borderColor: chartColors.target,
-          borderDash: [5, 5],
-          borderWidth: 2,
-          pointRadius: 0,
-          fill: false,
-        }
       ]
     };
   };
   
   // 准备食物分配图表数据
   const prepareFoodChartData = () => {
-    const labels = weightPlans.map((plan, index) => `第${(index + 1) * 2}周`);
+    // 使用日期而不是周数
+    const labels = weightPlans.map((plan) => {
+      const date = plan.date;
+      return `${date.getMonth() + 1}/${date.getDate()}`;
+    });
     
     return {
       labels,
@@ -107,14 +142,40 @@ const CatWeightChart: React.FC<CatWeightChartProps> = ({
           data: weightPlans.map(plan => plan.dryFoodGrams),
           backgroundColor: chartColors.dryFood,
           stack: 'Stack 0',
+          datalabels: {
+            align: "start" as const,
+            anchor: "end" as const,
+            formatter: (value: number, context: any) => {
+              return `${value}g`;
+            },
+            font: {
+              size: 10,
+              weight: 'bold'
+            },
+            color: 'rgba(0, 0, 0, 0.8)',
+            rotation: 0
+          }
         },
         {
-          label: '湿粮 (罐)',
-          // 将罐数转换为克数以便于在同一图表上显示
-          // 假设每罐85g
-          data: weightPlans.map(plan => plan.wetFoodCans * 85),
+          label: '湿粮 (g)',
+          // 直接使用克数
+          data: weightPlans.map(plan => plan.wetFoodGrams),
           backgroundColor: chartColors.wetFood,
           stack: 'Stack 0',
+          datalabels: {
+            align: "center" as const,
+            anchor: "start" as const,
+            formatter: (value: number, context: any) => {
+              // 直接显示克数
+              return value > 0 ? `${value}g` : '';
+            },
+            font: {
+              size: 10,
+              weight: "bold" as const
+            },
+            color: 'rgba(0, 0, 0, 0.8)',
+            rotation: 0
+          }
         }
       ]
     };
@@ -135,6 +196,7 @@ const CatWeightChart: React.FC<CatWeightChartProps> = ({
         }
       },
       tooltip: {
+        enabled: true, // 保留tooltip但添加直接显示的标签
         callbacks: {
           label: function(context: any) {
             const index = context.dataIndex;
@@ -145,23 +207,47 @@ const CatWeightChart: React.FC<CatWeightChartProps> = ({
               return [
                 `体重: ${context.raw} kg`,
                 `阶段: ${plan.phase}`,
-                `热量比例: ${plan.calorieRatio * 100}%`,
-                `每日热量: ${plan.dailyCalories} 卡`
+                `每日热量: ${plan.dailyCalories}`
               ];
             }
-            return `${context.dataset.label}: ${context.raw} kg`;
+            return `${context.dataset.label}: ${context.raw}`;
           }
         }
+      },
+      datalabels: {
+        display: function(context) {
+          // 只显示第一个数据集的标签
+          return context.datasetIndex === 0;
+        },
+        color: 'black',
+        align: "end" as const,
+        offset: 10,
+        clamp: true
       }
     },
     scales: {
       y: {
         title: {
           display: true,
-          text: '体重 (kg)'
+          text: '体重 (kg)',
+          padding: {top: 0, bottom: 10}
         },
         min: Math.floor(Math.min(targetWeight * 0.95, ...weightPlans.map(p => p.weightTarget))),
-        max: Math.ceil(currentWeight * 1.05)
+        max: Math.ceil(currentWeight * 1.05),
+        ticks: {
+          padding: 10,
+          font: {
+            size: 11
+          }
+        }
+      },
+      x: {
+        ticks: {
+          padding: 10,
+          font: {
+            size: 11
+          }
+        }
       }
     }
   };
@@ -174,12 +260,13 @@ const CatWeightChart: React.FC<CatWeightChartProps> = ({
       },
       title: {
         display: true,
-        text: '每日食物分配',
+        text: '食物分配',
         font: {
           size: 16
         }
       },
       tooltip: {
+        enabled: true, // 保留tooltip但添加直接显示的标签
         callbacks: {
           label: function(context: any) {
             const index = context.dataIndex;
@@ -188,31 +275,59 @@ const CatWeightChart: React.FC<CatWeightChartProps> = ({
             
             if (datasetIndex === 0) {
               return [
-                `干粮: ${plan.dryFoodGrams} g`,
+                `干粮: ${plan.dryFoodGrams}`,
                 `阶段: ${plan.phase}`,
-                `热量: ${Math.round(plan.dryFoodGrams * plan.calorieRatio)} 卡`
+                `热量: ${Math.round(plan.dryFoodGrams * plan.calorieRatio)}`
               ];
             } else {
               return [
-                `湿粮: ${plan.wetFoodCans} 罐 (约 ${Math.round(plan.wetFoodCans * 85)} g)`,
+                `湿粮: ${plan.wetFoodGrams}g`,
                 `阶段: ${plan.phase}`,
-                `热量: ${Math.round(plan.wetFoodCans * 85 * plan.calorieRatio)} 卡`
+                `热量: ${Math.round(plan.wetFoodGrams * 1.1)}`
               ];
             }
           }
         }
+      },
+      datalabels: {
+        display: true,
+        color: 'black',
+        clamp: true,
+        // 交错显示标签位置，避免重叠
+        align: function(context) {
+          const index = context.dataIndex;
+          return index % 2 === 0 ? 'end' : 'start';
+        },
+        anchor: function(context) {
+          const index = context.dataIndex;
+          return index % 2 === 0 ? 'end' : 'start';
+        },
+        offset: 8
       }
     },
     scales: {
       y: {
         title: {
           display: true,
-          text: '食物量'
+          text: '食物量',
+          padding: {top: 0, bottom: 10}
         },
-        stacked: true
+        stacked: true,
+        ticks: {
+          padding: 10,
+          font: {
+            size: 11
+          }
+        }
       },
       x: {
-        stacked: true
+        stacked: true,
+        ticks: {
+          padding: 10,
+          font: {
+            size: 11
+          }
+        }
       }
     }
   };
@@ -233,11 +348,11 @@ const CatWeightChart: React.FC<CatWeightChartProps> = ({
       <div className="p-4 mt-6 bg-gray-50 rounded-lg">
         <h3 className="mb-2 text-lg font-semibold">图表说明</h3>
         <ul className="pl-5 space-y-1 text-sm list-disc">
-          <li><span className="inline-block mr-2 w-3 h-3 bg-pink-400 rounded-full"></span> 初期: 热量摄入为基础代谢的90%</li>
-          <li><span className="inline-block mr-2 w-3 h-3 bg-blue-400 rounded-full"></span> 中期: 热量摄入为基础代谢的80%</li>
-          <li><span className="inline-block mr-2 w-3 h-3 bg-teal-400 rounded-full"></span> 后期: 热量摄入为基础代谢的70%</li>
-          <li><span className="inline-block mr-2 w-3 h-3 bg-orange-400 rounded-full"></span> 干粮: 每克约 {weightPlans[0]?.calorieRatio || 3.7} 卡路里</li>
-          <li><span className="inline-block mr-2 w-3 h-3 bg-gray-400 rounded-full"></span> 湿粮: 每克约 {weightPlans[0]?.wetFoodCans || 1.1} 卡路里，每罐约85克</li>
+          <li><span className="inline-block mr-2 w-3 h-3 bg-pink-400 rounded-full"></span> 初期 🔍: 热量摄入为基础代谢的 90%</li>
+          <li><span className="inline-block mr-2 w-3 h-3 bg-blue-400 rounded-full"></span> 中期 ⚡: 热量摄入为基础代谢的 80%</li>
+          <li><span className="inline-block mr-2 w-3 h-3 bg-teal-400 rounded-full"></span> 后期 🎯: 热量摄入为基础代谢的 70%</li>
+          <li><span className="inline-block mr-2 w-3 h-3 bg-orange-400 rounded-full"></span> 干粮 🥫: 每克约 {weightPlans[0]?.calorieRatio || 3.7} 卡路里</li>
+          <li><span className="inline-block mr-2 w-3 h-3 bg-gray-400 rounded-full"></span> 湿粮 💧: 每克约 1.1 卡路里，以85g为单位</li>
         </ul>
       </div>
     </div>

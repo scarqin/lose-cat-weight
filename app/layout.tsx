@@ -41,7 +41,7 @@ export default function RootLayout({
           fontSans.variable,
         )}
       >
-        <Providers themeProps={{ attribute: "class", defaultTheme: "dark" }}>
+        <Providers themeProps={{ attribute: "class", defaultTheme: "light", forcedTheme: "light" }}>
           <div className="flex relative flex-col h-screen">
             <Navbar />
             <main className="container flex-grow px-6 pt-16 mx-auto max-w-7xl">
@@ -55,7 +55,7 @@ export default function RootLayout({
                 title="heroui.com homepage"
               >
                 <span className="text-default-600">Powered by</span>
-                <p className="text-primary">Scarchin</p>
+                <p className="text-primary">ScarChin</p>
               </Link>
             </footer>
           </div>
