@@ -89,8 +89,8 @@ export default function CatDietPlan() {
     setNewCat({
       name: "",
       currentWeight: "",
-      dryFoodCalories: DEFAULT_DRY_FOOD_CALORIES,
-      wetFoodCalories: DEFAULT_WET_FOOD_CALORIES,
+      dryFoodCalories: DEFAULT_DRY_FOOD_CALORIES.toString(),
+      wetFoodCalories: DEFAULT_WET_FOOD_CALORIES.toString(),
     });
     setIsInitialView(false);
     setSelectedCatId(cat.id);

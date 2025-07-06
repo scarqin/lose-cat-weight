@@ -23,7 +23,8 @@ export const WET_FOOD_PACKAGE_SIZE = 85; // 湿粮标准包装规格
 // 湿粮比例过渡
 export const MAX_WET_FOOD_RATIO = 0.5; // 最大湿粮比例
 export const MONTHS_TO_TRANSITION = 4; // 过渡到最大湿粮比例的月数
-export const MONTHLY_WET_FOOD_INCREASE = MAX_WET_FOOD_RATIO / MONTHS_TO_TRANSITION; // 每月湿粮比例增加量
+export const MONTHLY_WET_FOOD_INCREASE =
+  MAX_WET_FOOD_RATIO / MONTHS_TO_TRANSITION; // 每月湿粮比例增加量
 
 // 减肥计划常量
 export const MAX_PLAN_WEEKS = 52; // 最大计划周数
@@ -39,14 +40,14 @@ export const WEIGHT_STATUS = {
   OBESE: "肥胖",
   OVERWEIGHT: "超重",
   NEAR_IDEAL: "接近理想",
-  IDEAL: "理想体重"
+  IDEAL: "理想体重",
 };
 
 // 减肥阶段描述
 export const WEIGHT_PHASE = {
   INITIAL: "初期",
   MIDDLE: "中期",
-  FINAL: "后期"
+  FINAL: "后期",
 };
 
 /**
@@ -64,7 +65,10 @@ export const calculateBaseCalories = (weight: number): number => {
  * @param phase 减肥阶段
  * @returns 减肥阶段热量(kcal)
  */
-export const calculatePhaseCalories = (baseCalories: number, phase: string): number => {
+export const calculatePhaseCalories = (
+  baseCalories: number,
+  phase: string,
+): number => {
   switch (phase) {
     case WEIGHT_PHASE.INITIAL:
       return baseCalories * INITIAL_PHASE_RATIO;
@@ -83,7 +87,7 @@ export const calculatePhaseCalories = (baseCalories: number, phase: string): num
  * @returns 每周最小减重量(g)
  */
 export const calculateMinWeeklyLoss = (weight: number): number => {
-  return Math.round(weight * 1000 * MIN_WEEKLY_WEIGHT_LOSS_PERCENTAGE / 100);
+  return Math.round((weight * 1000 * MIN_WEEKLY_WEIGHT_LOSS_PERCENTAGE) / 100);
 };
 
 /**
@@ -92,5 +96,5 @@ export const calculateMinWeeklyLoss = (weight: number): number => {
  * @returns 每周最大减重量(g)
  */
 export const calculateMaxWeeklyLoss = (weight: number): number => {
-  return Math.round(weight * 1000 * MAX_WEEKLY_WEIGHT_LOSS_PERCENTAGE / 100);
+  return Math.round((weight * 1000 * MAX_WEEKLY_WEIGHT_LOSS_PERCENTAGE) / 100);
 };

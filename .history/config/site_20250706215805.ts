@@ -3,7 +3,10 @@ export type SiteConfig = typeof siteConfig;
 export const siteConfig = {
   name: "Meow 老猫无痛减肥",
   description: "科学制定猫咪减肥计划，让爱猫健康瘦身",
-  navItems: [] as { label: string; href: string }[],
+  navItems: [
+    { label: "首页", href: "/" },
+    { label: "减肥计划", href: "/cat-diet" },
+  ],
   navMenuItems: [
     {
       label: "Profile",

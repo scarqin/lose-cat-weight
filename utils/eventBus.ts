@@ -13,13 +13,13 @@ class EventBus {
 
   publish(event: string): void {
     if (this.events[event]) {
-      this.events[event].forEach(callback => callback());
+      this.events[event].forEach((callback) => callback());
     }
   }
 
   unsubscribe(event: string, callback: EventCallback): void {
     if (this.events[event]) {
-      this.events[event] = this.events[event].filter(cb => cb !== callback);
+      this.events[event] = this.events[event].filter((cb) => cb !== callback);
     }
   }
 }
@@ -29,5 +29,5 @@ export const eventBus = new EventBus();
 
 // Event names
 export const EVENTS = {
-  SAVE_IMAGE: 'save-image',
+  SAVE_IMAGE: "save-image",
 };
