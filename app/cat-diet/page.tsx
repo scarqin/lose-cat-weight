@@ -49,6 +49,7 @@ export interface WeightPlan {
   wetFoodGrams: number; // 改为克数而不是罐数
   status: string;
   weightLossPercentage: number;
+  weightChangeGramsPerWeek: number; // 体重变化 g/周
 }
 
 export default function CatDietPlan() {
@@ -96,6 +97,9 @@ export default function CatDietPlan() {
       const weeklyWeightLossPercentage = weightLossRate / 100;
       const weeklyWeightLoss = Math.min(currentWeight * weeklyWeightLossPercentage, totalWeightLoss);
       const targetWeight = Math.max(currentWeight - weeklyWeightLoss * PHASE_DURATION_WEEKS, cat.targetWeight); // 2周为一个阶段
+      
+      // 计算每周体重变化（克/周）
+      const weightChangeGramsPerWeek = Math.round(weeklyWeightLoss * 1000); // 负值表示减重
       const dailyCalories = baseCalories * currentRatio;
       
       // 计算干粮和湿粮分配（逐渐从纯干粮转为半干半湿）
@@ -140,6 +144,7 @@ export default function CatDietPlan() {
         wetFoodGrams: wetFoodGrams, // 使用整数克数，如85g, 170g等
         status,
         weightLossPercentage: weightLossRate,
+        weightChangeGramsPerWeek: weightChangeGramsPerWeek,
       });
       
       currentWeight = targetWeight;
@@ -208,7 +213,13 @@ export default function CatDietPlan() {
       {/* 减肥计划详情 - 表格布局 */}
       {selectedCat && weightPlan.length > 0 && (
         <div className="overflow-x-auto p-6 rounded-lg shadow-lg">
-          <h2 className="mb-4 text-xl font-bold">{selectedCat.name} 的减肥计划</h2>
+          <div className="flex flex-col justify-between mb-4 sm:flex-row sm:items-center">
+            <h2 className="text-xl font-bold">{selectedCat.name} 的减肥计划</h2>
+            <div className="flex flex-wrap gap-2 mt-2 text-sm sm:mt-0 sm:text-base">
+              <span className="px-2 py-1 text-violet-800 bg-violet-100 rounded-md">目标：{selectedCat.targetWeight}kg</span>
+              <span className="px-2 py-1 text-green-800 bg-green-100 rounded-md">周期：{Math.ceil(weightPlan.length * 2 / 4)} 个月</span>
+            </div>
+          </div>
           {/* 减肥计划可视化图表 */}
           <CatWeightChart 
             weightPlans={weightPlan} 

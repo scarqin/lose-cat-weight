@@ -37,8 +37,9 @@ const chartColors = {
   middle: 'rgba(54, 162, 235, 0.6)',   // 中期 - 蓝色
   final: 'rgba(75, 192, 192, 0.6)',    // 后期 - 青绿色
   target: 'rgba(153, 102, 255, 0.4)',  // 目标体重 - 紫色
-  dryFood: 'rgba(255, 159, 64, 0.8)',  // 干粮 - 橙色
-  wetFood: 'rgba(201, 203, 207, 0.8)', // 湿粮 - 灰色
+  dryFood: 'rgba(255, 206, 86, 0.6)',  // 干粮 - 黄色（带透明度）
+  wetFood: 'rgba(54, 162, 235, 0.4)', // 湿粮 - 浅蓝色（更淡的透明度）
+  appropriate: 'rgba(54, 162, 235, 0.6)', // 适量 - 蓝色（与折线图一致）
 };
 
 interface CatWeightChartProps {
@@ -115,6 +116,7 @@ const CatWeightChart: React.FC<CatWeightChartProps> = ({
             offset: 10,
             formatter: (value: number, context: any) => {
               const index = context.dataIndex;
+              if (index === 0) return `${value}`; // 起始点只显示体重
               const plan = weightPlans[index - 1]; // 减1是因为我们添加了起始点
               return `${phaseIcons[index]} ${value}`;
             },
@@ -157,10 +159,11 @@ const CatWeightChart: React.FC<CatWeightChartProps> = ({
           data: weightPlans.map(plan => plan.dryFoodGrams),
           backgroundColor: chartColors.dryFood,
           stack: 'Stack 0',
+          // Custom datalabels configuration for Chart.js
           datalabels: {
-            align: "start" as const,
-            anchor: "end" as const,
-            formatter: (value: number, context: any) => {
+            align: 'start',
+            anchor: 'end',
+            formatter: (value: number) => {
               return `${value}`;
             },
             font: {
@@ -169,7 +172,7 @@ const CatWeightChart: React.FC<CatWeightChartProps> = ({
             },
             color: 'rgba(0, 0, 0, 0.8)',
             rotation: 0
-          }
+          } as any
         },
         {
           label: '湿粮 (g)',
@@ -177,20 +180,22 @@ const CatWeightChart: React.FC<CatWeightChartProps> = ({
           data: weightPlans.map(plan => plan.wetFoodGrams),
           backgroundColor: chartColors.wetFood,
           stack: 'Stack 0',
+          // Custom datalabels configuration for Chart.js
           datalabels: {
-            align: "center" as const,
-            anchor: "start" as const,
-            formatter: (value: number, context: any) => {
+            align: 'top',
+            anchor: 'center',
+            formatter: (value: number) => {
               // 直接显示克数
               return value > 0 ? `${value}` : '';
             },
             font: {
               size: 10,
-              weight: "bold" as const
+              weight: 'bold'
             },
             color: 'rgba(0, 0, 0, 0.8)',
-            rotation: 0
-          }
+            rotation: 0,
+            offset: 10
+          } as any
         }
       ]
     };
@@ -222,7 +227,8 @@ const CatWeightChart: React.FC<CatWeightChartProps> = ({
               return [
                 `体重: ${context.raw} kg`,
                 `阶段: ${plan.phase}`,
-                `每日热量: ${plan.dailyCalories}`
+                `热量: ${plan.dailyCalories}`,
+                `减少: ${plan.weightChangeGramsPerWeek || 0}g/周`
               ];
             }
             return `${context.dataset.label}: ${context.raw}`;
