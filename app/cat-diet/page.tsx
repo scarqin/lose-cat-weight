@@ -57,8 +57,8 @@ export default function CatDietPlan() {
   const [newCat, setNewCat] = useState({
     name: "",
     currentWeight: "",
-    dryFoodCalories: "3.8",
-    wetFoodCalories: "1.1"
+    dryFoodCalories: DEFAULT_DRY_FOOD_CALORIES,
+    wetFoodCalories: DEFAULT_WET_FOOD_CALORIES
   });
   const [selectedCatId, setSelectedCatId] = useState<number | null>(null);
   const [weightLossRate, setWeightLossRate] = useState(1.5); // Default 1.5% per week
@@ -164,18 +164,29 @@ export default function CatDietPlan() {
 
 
   const selectedCat = cats.find(cat => cat.id === selectedCatId);
-  const weightPlan = selectedCat ? calculateWeightPlan(selectedCat) : [];
-
-  // 当有猫咪添加后，自动更新计划
+  const [weightPlan, setWeightPlan] = useState<WeightPlan[]>([]);
+  
+  // 当选中的猫咪变化或者体重减轻率变化时，重新计算减肥计划
   useEffect(() => {
-    if (selectedCatId && cats.length > 0) {
-      // 自动计算所选猫咪的减肥计划
-      const selectedCat = cats.find(cat => cat.id === selectedCatId);
-      if (selectedCat) {
-        calculateWeightPlan(selectedCat);
-      }
+    if (selectedCat) {
+      setWeightPlan(calculateWeightPlan(selectedCat));
     }
-  }, [selectedCatId, weightLossRate]);
+  }, [selectedCat, weightLossRate]);
+
+  // 处理干粮热量密度变化
+  const handleDryFoodCaloriesChange = (newValue: number) => {
+    if (selectedCat) {
+      // 更新选中猫咪的干粮热量密度
+      const updatedCats = cats.map(cat => 
+        cat.id === selectedCat.id ? { ...cat, dryFoodCalories: newValue } : cat
+      );
+      setCats(updatedCats);
+      
+      // 使用更新后的猫咪信息重新计算减肥计划
+      const updatedCat = { ...selectedCat, dryFoodCalories: newValue };
+      setWeightPlan(calculateWeightPlan(updatedCat));
+    }
+  };
   
   // 分享功能 - 生成页面截图
   const handleShare = async () => {
@@ -311,7 +322,11 @@ export default function CatDietPlan() {
           />
         </div>
       )}
-      {selectedCat && <WeightLossGuide currentWeight={selectedCat.currentWeight} weightPlans={weightPlan} />}
+      {selectedCat && <WeightLossGuide 
+        currentWeight={selectedCat.currentWeight} 
+        weightPlans={weightPlan} 
+        onDryFoodCaloriesChange={handleDryFoodCaloriesChange}
+      />}
 
       {cats.length === 0 && !isInitialView && (
         <div className="py-12 text-center">

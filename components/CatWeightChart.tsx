@@ -122,7 +122,7 @@ const CatWeightChart: React.FC<CatWeightChartProps> = ({
             },
             font: {
               size: 10,
-              weight: 'bold'
+              weight: 'bold' as const
             },
             color: 'rgba(0, 0, 0, 0.8)',
             backgroundColor: 'rgba(255, 255, 255, 0.85)',
@@ -168,7 +168,7 @@ const CatWeightChart: React.FC<CatWeightChartProps> = ({
             },
             font: {
               size: 10,
-              weight: 'bold'
+              weight: 'bold' as const
             },
             color: 'rgba(0, 0, 0, 0.8)',
             rotation: 0
@@ -190,7 +190,7 @@ const CatWeightChart: React.FC<CatWeightChartProps> = ({
             },
             font: {
               size: 10,
-              weight: 'bold'
+              weight: 'bold' as const
             },
             color: 'rgba(0, 0, 0, 0.8)',
             rotation: 0,
@@ -264,7 +264,7 @@ const CatWeightChart: React.FC<CatWeightChartProps> = ({
         clamp: true,
         font: {
           size: (window.innerWidth < 768) ? 9 : 10,
-          weight: 'bold' as const
+          weight: 700 // Changed from 'bold' to 700
         }
       }
     },
@@ -365,7 +365,7 @@ const CatWeightChart: React.FC<CatWeightChartProps> = ({
         offset: 8,
         font: {
           size: (window.innerWidth < 768) ? 9 : 10,
-          weight: 'bold' as const
+          weight: 700 // Changed from 'bold' to 700
         }
       }
     },
