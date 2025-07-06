@@ -1,6 +1,5 @@
 import "@/styles/globals.css";
 import { Metadata, Viewport } from "next";
-import { Link } from "@heroui/link";
 import clsx from "clsx";
 
 import { Providers } from "./providers";
@@ -47,17 +46,6 @@ export default function RootLayout({
             <main className="container flex-grow px-6 pt-16 mx-auto max-w-7xl">
               {children}
             </main>
-            <footer className="flex justify-center items-center py-3 w-full">
-              <Link
-                isExternal
-                className="flex gap-1 items-center text-current"
-                href="https://scar.site/"
-                title="heroui.com homepage"
-              >
-                <span className="text-default-600">Powered by</span>
-                <p className="text-primary">ScarChin</p>
-              </Link>
-            </footer>
           </div>
         </Providers>
       </body>
