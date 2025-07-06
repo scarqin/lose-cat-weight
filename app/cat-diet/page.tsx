@@ -5,6 +5,7 @@ import { Button } from "@heroui/button";
 import { Input } from "@heroui/input";
 import CatWeightChart from "../../components/CatWeightChart";
 import { title } from "@/components/primitives";
+import WeightLossGuide from "@/components/WeightLossGuide";
 
 interface Cat {
   id: number;
@@ -196,6 +197,7 @@ export default function CatDietPlan() {
           />
         </div>
       )}
+      {selectedCat && <WeightLossGuide currentWeight={selectedCat.currentWeight} />}
 
       {cats.length === 0 && !isInitialView && (
         <div className="py-12 text-center">

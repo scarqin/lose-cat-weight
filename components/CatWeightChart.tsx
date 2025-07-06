@@ -54,15 +54,23 @@ const CatWeightChart: React.FC<CatWeightChartProps> = ({
 }) => {
   // 准备体重变化图表数据
   const prepareWeightChartData = () => {
+    // 创建今天的日期对象
+    const today = new Date();
+    
     // 使用日期而不是周数
     const labels = weightPlans.map((plan) => {
       const date = plan.date;
+      // 如果日期是今天，显示为"今天"
+      if (date.getDate() === today.getDate() && 
+          date.getMonth() === today.getMonth() && 
+          date.getFullYear() === today.getFullYear()) {
+        return '今天';
+      }
       return `${date.getMonth() + 1}/${date.getDate()}`;
     });
     
     // 添加起始体重
     const weights = [currentWeight, ...weightPlans.map(plan => plan.weightTarget)];
-    labels.unshift('今天');
     
     // 确定每个点的阶段颜色
     const backgroundColors = weightPlans.map(plan => {
@@ -77,12 +85,12 @@ const CatWeightChart: React.FC<CatWeightChartProps> = ({
     backgroundColors.unshift(chartColors.initial);
     
     // 准备阶段图标和热量信息
-    const phaseIcons = ['🔍', ...weightPlans.map(plan => {
+    const phaseIcons = [ ...weightPlans.map(plan => {
       switch(plan.phase) {
         case '初期': return ''; // 初期
         case '中期': return ''; // 中期
         case '后期': return ''; // 后期
-        default: return '🔍';
+        default: return '';
       }
     })];
     
@@ -128,9 +136,18 @@ const CatWeightChart: React.FC<CatWeightChartProps> = ({
   
   // 准备食物分配图表数据
   const prepareFoodChartData = () => {
+    // 创建今天的日期对象
+    const today = new Date();
+    
     // 使用日期而不是周数
     const labels = weightPlans.map((plan) => {
       const date = plan.date;
+      // 如果日期是今天，显示为"今天"
+      if (date.getDate() === today.getDate() && 
+          date.getMonth() === today.getMonth() && 
+          date.getFullYear() === today.getFullYear()) {
+        return '今天';
+      }
       return `${date.getMonth() + 1}/${date.getDate()}`;
     });
     
@@ -275,7 +292,7 @@ const CatWeightChart: React.FC<CatWeightChartProps> = ({
             
             if (datasetIndex === 0) {
               return [
-                `干粮: ${plan.dryFoodGrams}`,
+                `干粮: ${plan.dryFoodGrams}g`,
                 `阶段: ${plan.phase}`,
                 `热量: ${Math.round(plan.dryFoodGrams * plan.calorieRatio)}`
               ];
@@ -309,7 +326,7 @@ const CatWeightChart: React.FC<CatWeightChartProps> = ({
       y: {
         title: {
           display: true,
-          text: '食物量',
+          text: '食物分配',
           padding: {top: 0, bottom: 10}
         },
         stacked: true,
@@ -333,27 +350,19 @@ const CatWeightChart: React.FC<CatWeightChartProps> = ({
   };
   
   
+  // 移除计算热量的代码，已移至 WeightLossGuide 组件
+
   return (
-    <div className="mt-8">
+    <div className="mt-8 space-y-10">
+      {/* 图表区块 */}
       <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-        <div className="p-4 bg-white rounded-lg shadow">
+        <div className="p-4 bg-white rounded-lg shadow-md">
           <Line data={prepareWeightChartData()} options={weightChartOptions} />
         </div>
         
-        <div className="p-4 bg-white rounded-lg shadow">
+        <div className="p-4 bg-white rounded-lg shadow-md">
           <Bar data={prepareFoodChartData()} options={foodChartOptions} />
         </div>
-      </div>
-      
-      <div className="p-4 mt-6 bg-gray-50 rounded-lg">
-        <h3 className="mb-2 text-lg font-semibold">图表说明</h3>
-        <ul className="pl-5 space-y-1 text-sm list-disc">
-          <li><span className="inline-block mr-2 w-3 h-3 bg-pink-400 rounded-full"></span> 初期 🔍: 热量摄入为基础代谢的 90%</li>
-          <li><span className="inline-block mr-2 w-3 h-3 bg-blue-400 rounded-full"></span> 中期 ⚡: 热量摄入为基础代谢的 80%</li>
-          <li><span className="inline-block mr-2 w-3 h-3 bg-teal-400 rounded-full"></span> 后期 🎯: 热量摄入为基础代谢的 70%</li>
-          <li><span className="inline-block mr-2 w-3 h-3 bg-orange-400 rounded-full"></span> 干粮 🥫: 每克约 {weightPlans[0]?.calorieRatio || 3.7} 卡路里</li>
-          <li><span className="inline-block mr-2 w-3 h-3 bg-gray-400 rounded-full"></span> 湿粮 💧: 每克约 1.1 卡路里，以85g为单位</li>
-        </ul>
       </div>
     </div>
   );
