@@ -10,7 +10,7 @@ export const MIDDLE_PHASE_RATIO = 0.8; // 中期热量比例
 export const FINAL_PHASE_RATIO = 0.7; // 后期热量比例
 
 // 食物热量默认值 (卡路里/克)
-export const DEFAULT_DRY_FOOD_CALORIES = 3.8; // 干粮默认热量
+export const DEFAULT_DRY_FOOD_CALORIES = 3.85; // 干粮默认热量
 export const DEFAULT_WET_FOOD_CALORIES = 1.1; // 湿粮默认热量
 
 // 减重速度范围 (每周体重百分比)
