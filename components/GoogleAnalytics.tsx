@@ -3,20 +3,29 @@
 import { usePathname, useSearchParams } from "next/navigation";
 import { useEffect } from "react";
 import Script from "next/script";
+import { Suspense } from "react";
 
 const GA_TRACKING_ID = process.env.NEXT_PUBLIC_GA_ID || "";
 
-const GoogleAnalytics = () => {
+// Component that uses searchParams wrapped in Suspense
+const AnalyticsTracker = () => {
   const pathname = usePathname();
   const searchParams = useSearchParams();
-
+  
+  // We'll handle page view tracking on client-side only
   useEffect(() => {
-    const url = pathname + searchParams.toString();
-    window.gtag("config", GA_TRACKING_ID, {
-      page_path: url,
-    });
+    if (typeof window !== 'undefined') {
+      const url = pathname + (searchParams.toString() ? `?${searchParams.toString()}` : '');
+      window.gtag("config", GA_TRACKING_ID, {
+        page_path: url,
+      });
+    }
   }, [pathname, searchParams]);
+  
+  return null;
+};
 
+const GoogleAnalytics = () => {
   return (
     <>
       <Script
@@ -37,6 +46,10 @@ const GoogleAnalytics = () => {
           `,
         }}
       />
+      {/* Wrap the component that uses useSearchParams in Suspense */}
+      <Suspense fallback={null}>
+        <AnalyticsTracker />
+      </Suspense>
     </>
   );
 };
