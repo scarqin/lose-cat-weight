@@ -1,4 +1,7 @@
+"use client";
+
 import React from "react";
+import { useI18n } from "@/context/i18nContext";
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -32,15 +35,15 @@ ChartJS.register(
   datalabelsPlugin,
 );
 
-// 定义图表颜色
+// Define chart colors
 const chartColors = {
-  initial: "rgba(255, 99, 132, 0.6)", // 初期 - 粉红色
-  middle: "rgba(54, 162, 235, 0.6)", // 中期 - 蓝色
-  final: "rgba(75, 192, 192, 0.6)", // 后期 - 青绿色
-  target: "rgba(153, 102, 255, 0.4)", // 目标体重 - 紫色
-  dryFood: "rgba(255, 206, 86, 0.6)", // 干粮 - 黄色（带透明度）
-  wetFood: "rgba(54, 162, 235, 0.4)", // 湿粮 - 浅蓝色（更淡的透明度）
-  appropriate: "rgba(54, 162, 235, 0.6)", // 适量 - 蓝色（与折线图一致）
+  initial: "rgba(255, 99, 132, 0.6)", // Initial phase - pink
+  middle: "rgba(54, 162, 235, 0.6)", // Middle phase - blue
+  final: "rgba(75, 192, 192, 0.6)", // Final phase - teal
+  target: "rgba(153, 102, 255, 0.4)", // Target weight - purple
+  dryFood: "rgba(255, 206, 86, 0.6)", // Dry food - yellow (with transparency)
+  wetFood: "rgba(54, 162, 235, 0.4)", // Wet food - light blue (lighter transparency)
+  appropriate: "rgba(54, 162, 235, 0.6)", // Appropriate - blue (consistent with line chart)
 };
 
 interface CatWeightChartProps {
@@ -54,6 +57,7 @@ const CatWeightChart: React.FC<CatWeightChartProps> = ({
   currentWeight,
   targetWeight,
 }) => {
+  const { t } = useI18n();
   // 准备体重变化图表数据
   const prepareWeightChartData = () => {
     // 创建今天的日期对象
@@ -69,7 +73,7 @@ const CatWeightChart: React.FC<CatWeightChartProps> = ({
         date.getMonth() === today.getMonth() &&
         date.getFullYear() === today.getFullYear()
       ) {
-        return "今天";
+        return t("catWeightChart.today");
       }
 
       return `${date.getMonth() + 1}/${date.getDate()}`;
@@ -84,11 +88,11 @@ const CatWeightChart: React.FC<CatWeightChartProps> = ({
     // 确定每个点的阶段颜色
     const backgroundColors = weightPlans.map((plan) => {
       switch (plan.phase) {
-        case "初期":
+        case "weightPhase.initial":
           return chartColors.initial;
-        case "中期":
+        case "weightPhase.middle":
           return chartColors.middle;
-        case "后期":
+        case "weightPhase.final":
           return chartColors.final;
         default:
           return chartColors.initial;
@@ -102,12 +106,12 @@ const CatWeightChart: React.FC<CatWeightChartProps> = ({
     const phaseIcons = [
       ...weightPlans.map((plan) => {
         switch (plan.phase) {
-          case "初期":
-            return ""; // 初期
-          case "中期":
-            return ""; // 中期
-          case "后期":
-            return ""; // 后期
+          case "weightPhase.initial":
+            return ""; // Initial phase
+          case "weightPhase.middle":
+            return ""; // Middle phase
+          case "weightPhase.final":
+            return ""; // Final phase
           default:
             return "";
         }
@@ -118,7 +122,7 @@ const CatWeightChart: React.FC<CatWeightChartProps> = ({
       labels,
       datasets: [
         {
-          label: "体重 (kg)",
+          label: t("catWeightChart.weight"),
           data: weights,
           borderColor: "rgba(75, 192, 192, 1)",
           backgroundColor: backgroundColors,
@@ -168,7 +172,7 @@ const CatWeightChart: React.FC<CatWeightChartProps> = ({
         date.getMonth() === today.getMonth() &&
         date.getFullYear() === today.getFullYear()
       ) {
-        return "今天";
+        return t("catWeightChart.today");
       }
 
       return `${date.getMonth() + 1}/${date.getDate()}`;
@@ -178,7 +182,7 @@ const CatWeightChart: React.FC<CatWeightChartProps> = ({
       labels,
       datasets: [
         {
-          label: "干粮 (g)",
+          label: t("catWeightChart.dryFood"),
           data: weightPlans.map((plan) => plan.dryFoodGrams),
           backgroundColor: chartColors.dryFood,
           stack: "Stack 0",
@@ -198,7 +202,7 @@ const CatWeightChart: React.FC<CatWeightChartProps> = ({
           } as any,
         },
         {
-          label: "湿粮 (g)",
+          label: t("catWeightChart.wetFood"),
           // 直接使用克数
           data: weightPlans.map((plan) => plan.wetFoodGrams),
           backgroundColor: chartColors.wetFood,
@@ -241,7 +245,7 @@ const CatWeightChart: React.FC<CatWeightChartProps> = ({
       },
       title: {
         display: true,
-        text: "体重变化趋势",
+        text: t("catWeightChart.weightTrend"),
         font: {
           size: window.innerWidth < 768 ? 14 : 16,
         },
@@ -261,10 +265,11 @@ const CatWeightChart: React.FC<CatWeightChartProps> = ({
               const plan = weightPlans[index - 1]; // 减1是因为我们添加了起始点
 
               return [
-                `体重: ${context.raw} kg`,
-                `阶段: ${plan.phase}`,
-                `热量: ${plan.dailyCalories}`,
-                `减少: ${plan.weightChangeGramsPerWeek || 0}g/周`,
+                `${t("catWeightChart.weight").split(" ")[0]}: ${context.raw} kg`,
+                `${t("catWeightChart.phase")}: ${t(plan.phase)}`,
+                `${t("catWeightChart.calories")}: ${plan.dailyCalories}`,
+                `${t("catWeightChart.reduction")}: ${plan.weightChangeGramsPerWeek || 0}g/${t("catWeightChart.perWeek")}`,
+                
               ];
             }
 
@@ -276,7 +281,7 @@ const CatWeightChart: React.FC<CatWeightChartProps> = ({
         display: function (context: any) {
           // 在移动设备上隐藏部分标签以避免拥挤
           if (window.innerWidth < 768) {
-            // 在移动设备上只显示部分关键点的标签
+            // Only show labels for key points on mobile devices
             const index = context.dataIndex;
 
             return (
@@ -285,7 +290,7 @@ const CatWeightChart: React.FC<CatWeightChartProps> = ({
             );
           }
 
-          // 桌面设备显示所有标签
+          // Show all labels on desktop devices
           return context.datasetIndex === 0;
         },
         color: "black",
@@ -302,7 +307,7 @@ const CatWeightChart: React.FC<CatWeightChartProps> = ({
       y: {
         title: {
           display: window.innerWidth >= 768, // 在移动设备上隐藏轴标题
-          text: "体重 (kg)",
+          text: t("catWeightChart.weight"),
           padding: { top: 0, bottom: 10 },
           font: {
             size: window.innerWidth < 768 ? 10 : 12,
@@ -353,7 +358,7 @@ const CatWeightChart: React.FC<CatWeightChartProps> = ({
       },
       title: {
         display: true,
-        text: "食物分配",
+        text: t("catWeightChart.foodDistribution"),
         font: {
           size: window.innerWidth < 768 ? 14 : 16,
         },
@@ -370,10 +375,10 @@ const CatWeightChart: React.FC<CatWeightChartProps> = ({
             const plan = weightPlans[index];
 
             return [
-              `阶段: ${plan.phase}`,
-              ...(plan.dryFoodGrams > 0 ? [`干粮: ${plan.dryFoodGrams}g`] : []),
-              ...(plan.wetFoodGrams > 0 ? [`湿粮: ${plan.wetFoodGrams}g`] : []),
-              `热量: ${Math.round(plan.dryFoodGrams * 3.7) + Math.round(plan.wetFoodGrams * 1.1)}g`,
+              `${t("catWeightChart.phase")}: ${t(plan.phase)}`,
+              ...(plan.dryFoodGrams > 0 ? [`${t("catWeightChart.dryFood").split(" ")[0]}: ${plan.dryFoodGrams}g`] : []),
+              ...(plan.wetFoodGrams > 0 ? [`${t("catWeightChart.wetFood").split(" ")[0]}: ${plan.wetFoodGrams}g`] : []),
+              `${t("catWeightChart.calories")}: ${Math.round(plan.dryFoodGrams * 3.7) + Math.round(plan.wetFoodGrams * 1.1)}g`,
             ];
           },
         },
@@ -384,14 +389,14 @@ const CatWeightChart: React.FC<CatWeightChartProps> = ({
           if (window.innerWidth < 768) {
             const index = context.dataIndex;
 
-            return index % 3 === 0; // 在移动设备上只显示每第三个数据点的标签
+            return index % 3 === 0; // Only show every third data point label on mobile devices
           }
 
-          return true; // 桌面设备显示所有标签
+          return true; // Show all labels on desktop devices
         },
         color: "black",
         clamp: true,
-        // 交错显示标签位置，避免重叠
+        // Alternate label positions to avoid overlap
         align: function (context: any) {
           const index = context.dataIndex;
 
@@ -413,7 +418,7 @@ const CatWeightChart: React.FC<CatWeightChartProps> = ({
       y: {
         title: {
           display: window.innerWidth >= 768, // 在移动设备上隐藏轴标题
-          text: "干湿粮比例",
+          text: t("catWeightChart.foodRatio"),
           padding: { top: 0, bottom: 10 },
           font: {
             size: window.innerWidth < 768 ? 10 : 12,
@@ -435,22 +440,21 @@ const CatWeightChart: React.FC<CatWeightChartProps> = ({
           font: {
             size: window.innerWidth < 768 ? 9 : 11,
           },
-          maxRotation: window.innerWidth < 768 ? 45 : 0, // 在移动设备上旋转标签
+          maxRotation: window.innerWidth < 768 ? 45 : 0, // Rotate labels on mobile devices
           autoSkip: true,
-          maxTicksLimit: window.innerWidth < 768 ? 6 : 10, // 在移动设备上减少显示的标签数量
+          maxTicksLimit: window.innerWidth < 768 ? 6 : 10, // Reduce number of visible labels on mobile devices
         },
       },
     },
   };
 
-  // 移除计算热量的代码，已移至 WeightLossGuide 组件
+  // Removed calorie calculation code, moved to WeightLossGuide component
 
-  // 添加窗口大小变化监听，以便在设备旋转或调整大小时重新渲染图表
+  // Add window resize listener to re-render charts when device is rotated or resized
   React.useEffect(() => {
     const handleResize = () => {
-      // 强制重新渲染组件
-      // 这里我们只是设置一个状态来触发重新渲染
-      // 实际上不需要做任何事情，因为我们在图表选项中使用了 window.innerWidth
+      // Here we're just setting a state to trigger re-rendering
+      // We don't actually need to do anything because we use window.innerWidth in chart options
       const chart = ChartJS.getChart("weight-chart");
 
       if (chart) {
@@ -472,7 +476,7 @@ const CatWeightChart: React.FC<CatWeightChartProps> = ({
 
   return (
     <div className="mt-8 space-y-10">
-      {/* 图表区块 */}
+      {/* Chart section */}
       <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
         <div className="p-4 bg-white rounded-lg shadow-md">
           <div style={{ height: window.innerWidth < 768 ? "250px" : "300px" }}>

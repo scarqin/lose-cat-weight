@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
+import { useI18n } from "@/context/i18nContext";
 import html2canvas from "html2canvas";
 import { Button } from "@heroui/button";
 import { Input } from "@heroui/input";
@@ -55,6 +56,7 @@ export interface WeightPlan {
 }
 
 export default function CatDietPlan() {
+  const { t } = useI18n();
   const [cats, setCats] = useState<Cat[]>([]);
   const [newCat, setNewCat] = useState({
     name: "",
@@ -227,7 +229,7 @@ export default function CatDietPlan() {
 
     try {
       setIsGeneratingImage(true);
-      setShareMessage("正在生成图片...");
+      setShareMessage(t("catDiet.generatingImage"));
 
       // 使用 html2canvas 将页面内容转换为 canvas
       const canvas = await html2canvas(contentRef.current, {
@@ -244,22 +246,22 @@ export default function CatDietPlan() {
       const link = document.createElement("a");
 
       link.href = imageData;
-      link.download = `猫咪减肥计划_${new Date().toLocaleDateString()}.png`;
+      link.download = `Cat_Weight_Loss_Plan_${new Date().toLocaleDateString()}.png`;
 
       // 触发下载
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
 
-      setShareMessage("图片已保存!");
+      setShareMessage(t("catDiet.imageGenerated"));
 
       // 3秒后清除消息
       setTimeout(() => {
         setShareMessage(null);
       }, 3000);
     } catch (error) {
-      console.error("生成图片失败:", error);
-      setShareMessage("生成图片失败，请重试");
+      console.error("Image generation failed:", error);
+      setShareMessage(t("catDiet.imageGenerationFailed"));
     } finally {
       setIsGeneratingImage(false);
     }
@@ -269,9 +271,9 @@ export default function CatDietPlan() {
     <div ref={contentRef} className="container max-w-6xl px-4 mx-auto">
       {isInitialView && (
         <div className="my-8 text-center">
-          <h1 className={title({ color: "violet" })}>🐱 老猫无痛减肥</h1>
+          <h1 className={title({ color: "violet" })}>{t("catDiet.title")}</h1>
           <p className="mt-4 text-lg text-gray-600">
-            科学制定减肥计划，一起守护老年猪咪
+            {t("catDiet.subtitle")}
           </p>
         </div>
       )}
@@ -279,13 +281,13 @@ export default function CatDietPlan() {
       {/* 初始视图 - 只显示体重输入 */}
       {isInitialView ? (
         <div className="max-w-md p-6 mx-auto mb-8 text-center rounded-lg shadow-lg">
-          <h2 className="mb-6 text-xl font-bold">输入猫咪体重</h2>
+          <h2 className="mb-6 text-xl font-bold">{t("catDiet.inputWeight")}</h2>
           <div className="mb-6">
             <Input
               autoFocus
               className="text-center"
-              label="猫咪体重 (kg)"
-              placeholder="例如：7.5"
+              label={t("catDiet.catWeight")}
+              placeholder={t("catDiet.weightExample")}
               size="lg"
               step="0.1"
               type="number"
@@ -296,7 +298,7 @@ export default function CatDietPlan() {
             />
           </div>
           <Button className="w-full" color="primary" size="lg" onClick={addCat}>
-            开始
+            {t("catDiet.start")}
           </Button>
         </div>
       ) : (
@@ -315,7 +317,7 @@ export default function CatDietPlan() {
           <div className="flex flex-col justify-between mb-4 sm:flex-row sm:items-center">
             <div className="flex items-center gap-3">
               <h2 className="text-xl font-bold">
-                {selectedCat.name} 的减肥计划
+                {selectedCat.name}{t("catDiet.planTitle")}
               </h2>
               <Button
                 className="flex items-center gap-1"
@@ -327,7 +329,7 @@ export default function CatDietPlan() {
                 {isGeneratingImage ? (
                   <>
                     <span className="inline-block w-4 h-4 border-2 border-current rounded-full animate-spin border-t-transparent" />
-                    生成中...
+                    {t("catDiet.generating")}
                   </>
                 ) : (
                   <>
@@ -346,17 +348,17 @@ export default function CatDietPlan() {
                       <polyline points="16 6 12 2 8 6" />
                       <line x1="12" x2="12" y1="2" y2="15" />
                     </svg>
-                    保存为图片
+                    {t("catDiet.saveAsImage")}
                   </>
                 )}
               </Button>
             </div>
             <div className="flex items-center gap-2 text-sm sm:mt-0">
               <Chip color="primary" variant="flat">
-                目标：{selectedCat.targetWeight}kg
+                {t("catDiet.target")}：{selectedCat.targetWeight}kg
               </Chip>
               <Chip color="success" variant="flat">
-                周期：{Math.ceil((weightPlan.length * 2) / 4)} 个月
+                {t("catDiet.period")}：{Math.ceil((weightPlan.length * 2) / 4)} {t("catDiet.months")}
               </Chip>
             </div>
           </div>
@@ -381,7 +383,7 @@ export default function CatDietPlan() {
         <div className="py-12 text-center">
           <div className="mb-4 text-6xl">🐱</div>
           <p className="text-lg text-gray-500">
-            请先添加猫咪信息开始制定减肥计划
+            {t("catDiet.addCatInfo")}
           </p>
         </div>
       )}
@@ -392,7 +394,7 @@ export default function CatDietPlan() {
           href="https://scar.site/"
           title="heroui.com homepage"
         >
-          <span className="text-default-600">Powered by</span>
+          <span className="text-default-600">{t("footer.poweredBy")}</span>
           <p className="text-primary">ScarChin</p>
         </Link>
       </footer>

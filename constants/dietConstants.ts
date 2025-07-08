@@ -35,19 +35,19 @@ export const PHASE_RATIO_DECREASE = 0.05; // 每个阶段热量比例减少量
 export const OVERWEIGHT_THRESHOLD = 0.9; // 超重阈值（当前体重的90%）
 export const NEAR_IDEAL_THRESHOLD = 1.1; // 接近理想体重阈值（目标体重的110%）
 
-// 体重状态描述
+// 体重状态描述 - 使用翻译键
 export const WEIGHT_STATUS = {
-  OBESE: "肥胖",
-  OVERWEIGHT: "超重",
-  NEAR_IDEAL: "接近理想",
-  IDEAL: "理想体重",
+  OBESE: "weightStatus.obese",
+  OVERWEIGHT: "weightStatus.overweight",
+  NEAR_IDEAL: "weightStatus.nearIdeal",
+  IDEAL: "weightStatus.ideal",
 };
 
-// 减肥阶段描述
+// 减肥阶段描述 - 使用翻译键
 export const WEIGHT_PHASE = {
-  INITIAL: "初期",
-  MIDDLE: "中期",
-  FINAL: "后期",
+  INITIAL: "weightPhase.initial",
+  MIDDLE: "weightPhase.middle",
+  FINAL: "weightPhase.final",
 };
 
 /**

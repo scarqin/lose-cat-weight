@@ -15,6 +15,7 @@ import clsx from "clsx";
 
 import { siteConfig } from "@/config/site";
 import { GithubIcon, SearchIcon } from "@/components/icons";
+import { LanguageSwitcher } from "@/components/language-switcher";
 
 export const Navbar = () => {
   const searchInput = (
@@ -42,12 +43,12 @@ export const Navbar = () => {
     <HeroUINavbar maxWidth="xl" position="sticky">
       <NavbarContent className="basis-1/5 sm:basis-full" justify="start">
         <NavbarBrand as="li" className="gap-3 max-w-fit">
-          <NextLink className="flex items-center justify-start gap-1" href="/">
+          <NextLink className="flex gap-1 justify-start items-center" href="/">
             🐱
             <p className="font-bold text-inherit">Meow</p>
           </NextLink>
         </NavbarBrand>
-        <ul className="justify-start hidden gap-4 ml-2 lg:flex">
+        <ul className="hidden gap-4 justify-start ml-2 lg:flex">
           {siteConfig.navItems.map((item) => (
             <NavbarItem key={item.href}>
               <NextLink
@@ -69,6 +70,9 @@ export const Navbar = () => {
         className="hidden sm:flex basis-1/5 sm:basis-full"
         justify="end"
       >
+        <NavbarItem className="hidden gap-2 sm:flex">
+          <LanguageSwitcher />
+        </NavbarItem>
         <NavbarItem className="hidden gap-2 sm:flex">
           <Link isExternal aria-label="Github" href={siteConfig.links.github}>
             <GithubIcon className="text-default-500" />

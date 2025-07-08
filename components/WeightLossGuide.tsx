@@ -1,4 +1,7 @@
+"use client";
+
 import React, { useState, useRef } from "react";
+import { useI18n } from "@/context/i18nContext";
 
 import {
   WEIGHT_MULTIPLIER,
@@ -33,6 +36,7 @@ const WeightLossGuide: React.FC<WeightLossGuideProps> = ({
   weightPlans = [],
   onDryFoodCaloriesChange,
 }) => {
+  const { t } = useI18n();
   // 干粮热量密度状态变量
   const [dryFoodCalories, setDryFoodCalories] = useState<number>(
     DEFAULT_DRY_FOOD_CALORIES,
@@ -105,7 +109,7 @@ const WeightLossGuide: React.FC<WeightLossGuideProps> = ({
   return (
     <div ref={topRef} className="p-6 mt-8 bg-gray-50 rounded-xl shadow-md">
       <h2 className="mb-6 text-2xl font-bold text-center text-gray-700">
-        科学减肥指南
+        {t("weightLossGuide.title")}
       </h2>
 
       <div className="grid grid-cols-1 gap-8 sm:grid-cols-3">
@@ -129,29 +133,29 @@ const WeightLossGuide: React.FC<WeightLossGuideProps> = ({
               </svg>
             </div>
             <h3 className="text-xl font-semibold text-gray-800">
-              科学能量计算
+              {t("weightLossGuide.energyCalculation.title")}
             </h3>
           </div>
 
           <div className="flex-grow">
             <div className="p-4 mb-4 bg-blue-50 rounded-lg border border-blue-100">
-              <h4 className="mb-2 font-medium text-blue-800">基础代谢需求</h4>
+              <h4 className="mb-2 font-medium text-blue-800">{t("weightLossGuide.energyCalculation.baseMetabolicNeeds")}</h4>
               <p className="text-sm text-gray-700">
-                基础代谢公式：
+                {t("weightLossGuide.energyCalculation.formula")}：
                 <span className="font-medium">
-                  体重(kg) × {WEIGHT_MULTIPLIER} + {BASE_CALORIE_CONSTANT}
+                  {t("weightLossGuide.energyCalculation.weightKg")} × {WEIGHT_MULTIPLIER} + {BASE_CALORIE_CONSTANT}
                 </span>
               </p>
               <p className="mt-2 text-sm">
-                你的猪咪{" "}
+                {t("weightLossGuide.energyCalculation.yourCat")}{" "}
                 <span className="font-medium text-blue-700">
                   {currentWeight}
                 </span>{" "}
-                kg，需{" "}
+                kg，{t("weightLossGuide.energyCalculation.needs")}{" "}
                 <span className="font-medium text-blue-700">
                   {baseCalories}
                 </span>{" "}
-                Kcal/天
+                Kcal/{t("weightLossGuide.energyCalculation.perDay")}
               </p>
             </div>
 
@@ -159,42 +163,42 @@ const WeightLossGuide: React.FC<WeightLossGuideProps> = ({
               <div className="p-3 bg-gray-50 rounded-lg border border-gray-100">
                 <div className="flex justify-between items-center">
                   <span className="text-sm font-medium text-gray-700">
-                    减肥初期摄入量
+                    {t("weightLossGuide.energyCalculation.initialIntake")}
                   </span>
                   <span className="font-medium text-blue-700">
                     {initialPhaseCalories} Kcal
                   </span>
                 </div>
                 <p className="mt-1 text-xs text-gray-500">
-                  基础代谢的 {INITIAL_PHASE_RATIO * 100}%
+                  {t("weightLossGuide.energyCalculation.ofBaseMetabolism")} {INITIAL_PHASE_RATIO * 100}%
                 </p>
               </div>
 
               <div className="p-3 bg-gray-50 rounded-lg border border-gray-100">
                 <div className="flex justify-between items-center">
                   <span className="text-sm font-medium text-gray-700">
-                    减肥中期摄入量
+                    {t("weightLossGuide.energyCalculation.middleIntake")}
                   </span>
                   <span className="font-medium text-blue-700">
                     {middlePhaseCalories} Kcal
                   </span>
                 </div>
                 <p className="mt-1 text-xs text-gray-500">
-                  基础代谢的 {MIDDLE_PHASE_RATIO * 100}%
+                  {t("weightLossGuide.energyCalculation.ofBaseMetabolism")} {MIDDLE_PHASE_RATIO * 100}%
                 </p>
               </div>
 
               <div className="p-3 bg-gray-50 rounded-lg border border-gray-100">
                 <div className="flex justify-between items-center">
                   <span className="text-sm font-medium text-gray-700">
-                    减肥后期摄入量
+                    {t("weightLossGuide.energyCalculation.finalIntake")}
                   </span>
                   <span className="font-medium text-blue-700">
                     {finalPhaseCalories} Kcal
                   </span>
                 </div>
                 <p className="mt-1 text-xs text-gray-500">
-                  基础代谢的 {FINAL_PHASE_RATIO * 100}%
+                  {t("weightLossGuide.energyCalculation.ofBaseMetabolism")} {FINAL_PHASE_RATIO * 100}%
                 </p>
               </div>
             </div>
@@ -221,16 +225,16 @@ const WeightLossGuide: React.FC<WeightLossGuideProps> = ({
               </svg>
             </div>
             <h3 className="text-xl font-semibold text-gray-800">
-              营养与活动指南
+              {t("weightLossGuide.nutritionActivity.title")}
             </h3>
           </div>
 
           <div className="flex-grow">
             <div className="p-4 mb-4 bg-amber-50 rounded-lg border border-amber-100">
-              <h4 className="mb-2 font-medium text-amber-800">食物能量密度</h4>
+              <h4 className="mb-2 font-medium text-amber-800">{t("weightLossGuide.nutritionActivity.foodEnergyDensity")}</h4>
               <div className="flex justify-between items-center mb-2">
                 <span className="text-sm font-medium text-gray-700">
-                  干粮能量密度
+                  {t("weightLossGuide.nutritionActivity.dryFoodDensity")}
                 </span>
                 {isEditingDryFoodCalories ? (
                   <div className="flex items-center">
@@ -261,7 +265,7 @@ const WeightLossGuide: React.FC<WeightLossGuideProps> = ({
                         setIsEditingDryFoodCalories(false);
                       }}
                     >
-                      确定
+                      {t("weightLossGuide.nutritionActivity.confirm")}
                     </button>
                   </div>
                 ) : (
@@ -296,19 +300,19 @@ const WeightLossGuide: React.FC<WeightLossGuideProps> = ({
               </div>
               <div className="flex justify-between items-center">
                 <span className="text-sm font-medium text-gray-700">
-                  湿粮能量密度
+                  {t("weightLossGuide.nutritionActivity.wetFoodDensity")}
                 </span>
                 <span className="font-medium text-amber-700">
-                  约 {DEFAULT_WET_FOOD_CALORIES} Kcal/g
+                  {t("weightLossGuide.nutritionActivity.about")} {DEFAULT_WET_FOOD_CALORIES} Kcal/g
                 </span>
               </div>
               <p className="mt-2 text-xs text-gray-500">
-                建议逐步从纯干粮过渡到干湿混合喂养
+                {t("weightLossGuide.nutritionActivity.transitionAdvice")}
               </p>
             </div>
 
             <div className="mb-4">
-              <h4 className="mb-2 font-medium text-gray-800">活动建议</h4>
+              <h4 className="mb-2 font-medium text-gray-800">{t("weightLossGuide.nutritionActivity.activitySuggestions")}</h4>
               <ul className="space-y-2 text-sm text-gray-700">
                 <li className="flex items-start">
                   <svg
@@ -325,7 +329,7 @@ const WeightLossGuide: React.FC<WeightLossGuideProps> = ({
                       strokeWidth="2"
                     />
                   </svg>
-                  <span>每日定时互动游戏，每次 10-15 分钟，每天 2-3 次</span>
+                  <span>{t("weightLossGuide.nutritionActivity.activity1")}</span>
                 </li>
                 <li className="flex items-start">
                   <svg
@@ -342,7 +346,7 @@ const WeightLossGuide: React.FC<WeightLossGuideProps> = ({
                       strokeWidth="2"
                     />
                   </svg>
-                  <span>使用智能喂食器或拼图喂食器延长进食时间</span>
+                  <span>{t("weightLossGuide.nutritionActivity.activity2")}</span>
                 </li>
                 <li className="flex items-start">
                   <svg
@@ -359,7 +363,7 @@ const WeightLossGuide: React.FC<WeightLossGuideProps> = ({
                       strokeWidth="2"
                     />
                   </svg>
-                  <span>增加垂直空间，鼓励猫咪攀爬活动</span>
+                  <span>{t("weightLossGuide.nutritionActivity.activity3")}</span>
                 </li>
               </ul>
             </div>
@@ -380,15 +384,15 @@ const WeightLossGuide: React.FC<WeightLossGuideProps> = ({
                     strokeWidth="2"
                   />
                 </svg>
-                注意事项
+                {t("weightLossGuide.nutritionActivity.precautions")}
               </h4>
               <p className="mt-1 text-xs text-gray-700">
-                如猫咪出现食欲不振、活力下降或体重减轻过快，请立即咨询兽医
+                {t("weightLossGuide.nutritionActivity.precautionsText")}
               </p>
             </div>
           </div>
         </div>
-        {/* 减重进度监控 */}
+        {/* Weight Loss Monitoring */}
         <div className="flex flex-col p-6 h-full bg-white rounded-lg border border-gray-100 shadow-sm transition-shadow hover:shadow-md">
           <div className="flex items-center mb-4">
             <div className="p-3 mr-4 bg-green-100 rounded-full">
@@ -408,15 +412,15 @@ const WeightLossGuide: React.FC<WeightLossGuideProps> = ({
               </svg>
             </div>
             <h3 className="text-xl font-semibold text-gray-800">
-              减重进度监控
+              {t("weightLossGuide.weightProgress.title")}
             </h3>
           </div>
 
           <div className="flex-grow">
             <div className="p-4 mb-4 bg-green-50 rounded-lg border border-green-100">
-              <h4 className="mb-2 font-medium text-green-800">科学减重速率</h4>
+              <h4 className="mb-2 font-medium text-green-800">{t("weightLossGuide.weightProgress.idealWeightLoss")}</h4>
               <p className="text-sm text-gray-700">
-                每周减少当前体重的
+                {t("weightLossGuide.weightProgress.perWeek")}
                 <span className="font-medium">
                   {" "}
                   {MIN_WEEKLY_WEIGHT_LOSS_PERCENTAGE}-
@@ -429,10 +433,10 @@ const WeightLossGuide: React.FC<WeightLossGuideProps> = ({
               <div className="p-3 bg-gray-50 rounded-lg border border-gray-100">
                 <div className="flex justify-between items-center">
                   <span className="text-sm font-medium text-gray-700">
-                    初期体重变化
+                    {t("weightLossGuide.weightProgress.initialPhase")}
                   </span>
                   <span className="font-medium text-green-700">
-                    {calculatedInitialWeightChange} g/周
+                    {calculatedInitialWeightChange} g/{t("weightLossGuide.weightProgress.perWeek")}
                   </span>
                 </div>
                 <div className="mt-2 w-full bg-gray-200 rounded-full h-1.5">
@@ -444,22 +448,21 @@ const WeightLossGuide: React.FC<WeightLossGuideProps> = ({
                   />
                 </div>
                 <p className="mt-1 text-xs text-gray-500">
-                  平均每周减重{" "}
+                  {t("weightLossGuide.weightProgress.weeklyLoss")}{" "}
                   {(
                     (calculatedInitialWeightChange / (currentWeight * 1000)) *
                     100
-                  ).toFixed(2)}
-                  %
+                  ).toFixed(2)}%
                 </p>
               </div>
 
               <div className="p-3 bg-gray-50 rounded-lg border border-gray-100">
                 <div className="flex justify-between items-center">
                   <span className="text-sm font-medium text-gray-700">
-                    中期体重变化
+                    {t("weightLossGuide.weightProgress.middlePhase")}
                   </span>
                   <span className="font-medium text-green-700">
-                    {calculatedMiddleWeightChange} g/周
+                    {calculatedMiddleWeightChange} g/{t("weightLossGuide.weightProgress.perWeek")}
                   </span>
                 </div>
                 <div className="mt-2 w-full bg-gray-200 rounded-full h-1.5">
@@ -471,22 +474,21 @@ const WeightLossGuide: React.FC<WeightLossGuideProps> = ({
                   />
                 </div>
                 <p className="mt-1 text-xs text-gray-500">
-                  平均每周减重{" "}
+                  {t("weightLossGuide.weightProgress.weeklyLoss")}{" "}
                   {(
                     (calculatedMiddleWeightChange / (currentWeight * 1000)) *
                     100
-                  ).toFixed(2)}
-                  %
+                  ).toFixed(2)}%
                 </p>
               </div>
 
               <div className="p-3 bg-gray-50 rounded-lg border border-gray-100">
                 <div className="flex justify-between items-center">
                   <span className="text-sm font-medium text-gray-700">
-                    后期体重变化
+                    {t("weightLossGuide.weightProgress.finalPhase")}
                   </span>
                   <span className="font-medium text-green-700">
-                    {calculatedFinalWeightChange} g/周
+                    {calculatedFinalWeightChange} g/{t("weightLossGuide.weightProgress.perWeek")}
                   </span>
                 </div>
                 <div className="mt-2 w-full bg-gray-200 rounded-full h-1.5">
@@ -498,12 +500,11 @@ const WeightLossGuide: React.FC<WeightLossGuideProps> = ({
                   />
                 </div>
                 <p className="mt-1 text-xs text-gray-500">
-                  平均每周减重{" "}
+                  {t("weightLossGuide.weightProgress.weeklyLoss")}{" "}
                   {(
                     (calculatedFinalWeightChange / (currentWeight * 1000)) *
                     100
-                  ).toFixed(2)}
-                  %
+                  ).toFixed(2)}%
                 </p>
               </div>
             </div>
