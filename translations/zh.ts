@@ -1,8 +1,8 @@
 // Chinese translations
 export default {
   site: {
-    name: "Meow 老猫无痛减肥",
-    description: "科学制定猫咪减肥计划，让爱猫健康瘦身",
+    name: "Cat Weight Loss 减肥猫 | 猫咪减重工具、体重计算器与最佳减肥猫粮推荐",
+    description: "Cat Weight Loss 是猫咪专用的减肥工具，提供体重计算器、饮食计划与优质减肥猫粮推荐，助猫健康瘦身。",
   },
   nav: {
     profile: "个人资料",

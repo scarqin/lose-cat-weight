@@ -1,8 +1,8 @@
 // English translations
 export default {
   site: {
-    name: "Meow Cat Weight Loss",
-    description: "Scientifically design cat weight loss plans for healthy slimming",
+    name: "Cat Weight Loss | Weight Loss Calculator, Best Cat Food & Diet Plan for Overweight Cats",
+    description: "Cat Weight Loss offers tools, diet plans, and top cat foods to help your cat lose weight safely and stay healthy.",
   },
   nav: {
     profile: "Profile",
