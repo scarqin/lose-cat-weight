@@ -268,7 +268,7 @@ export default function CatDietPlan() {
   };
 
   return (
-    <div ref={contentRef} className="container max-w-6xl px-4 mx-auto">
+    <div ref={contentRef} className="container px-4 mx-auto max-w-6xl">
       {isInitialView && (
         <div className="my-8 text-center">
           <h1 className={title({ color: "violet" })}>{t("catDiet.title")}</h1>
@@ -280,7 +280,7 @@ export default function CatDietPlan() {
 
       {/* 初始视图 - 只显示体重输入 */}
       {isInitialView ? (
-        <div className="max-w-md p-6 mx-auto mb-8 text-center rounded-lg shadow-lg">
+        <div className="p-6 mx-auto mb-8 max-w-md text-center rounded-lg shadow-lg">
           <h2 className="mb-6 text-xl font-bold">{t("catDiet.inputWeight")}</h2>
           <div className="mb-6">
             <Input
@@ -306,21 +306,21 @@ export default function CatDietPlan() {
       )}
 
       {shareMessage && (
-        <div className="p-2 mb-4 text-center text-blue-700 rounded bg-blue-50">
+        <div className="p-2 mb-4 text-center text-blue-700 bg-blue-50 rounded">
           {shareMessage}
         </div>
       )}
 
       {/* 减肥计划详情 - 表格布局 */}
       {selectedCat && weightPlan.length > 0 && (
-        <div className="p-6 overflow-x-auto rounded-lg shadow-lg">
+        <div className="overflow-x-auto p-6 rounded-lg shadow-lg">
           <div className="flex flex-col justify-between mb-4 sm:flex-row sm:items-center">
-            <div className="flex items-center gap-3">
+            <div className="flex gap-3 items-center">
               <h2 className="text-xl font-bold">
                 {selectedCat.name}{t("catDiet.planTitle")}
               </h2>
               <Button
-                className="flex items-center gap-1"
+                className="flex gap-1 items-center"
                 data-html2canvas-ignore="true"
                 disabled={isGeneratingImage}
                 size="sm"
@@ -328,7 +328,7 @@ export default function CatDietPlan() {
               >
                 {isGeneratingImage ? (
                   <>
-                    <span className="inline-block w-4 h-4 border-2 border-current rounded-full animate-spin border-t-transparent" />
+                    <span className="inline-block w-4 h-4 rounded-full border-2 border-current animate-spin border-t-transparent" />
                     {t("catDiet.generating")}
                   </>
                 ) : (
@@ -353,7 +353,7 @@ export default function CatDietPlan() {
                 )}
               </Button>
             </div>
-            <div className="flex items-center gap-2 text-sm sm:mt-0">
+            <div className="flex gap-2 items-center text-sm sm:mt-0">
               <Chip color="primary" variant="flat">
                 {t("catDiet.target")}：{selectedCat.targetWeight}kg
               </Chip>
@@ -387,15 +387,15 @@ export default function CatDietPlan() {
           </p>
         </div>
       )}
-      <footer className="flex items-center justify-center w-full py-3">
+      <footer className="flex justify-center items-center py-3 w-full">
         <Link
           isExternal
-          className="flex items-center gap-1 text-current"
+          className="flex gap-1 items-center text-current"
           href="https://scar.site/"
           title="heroui.com homepage"
         >
           <span className="text-default-600">{t("footer.poweredBy")}</span>
-          <p className="text-primary">ScarChin</p>
+          <p className="text-primary">meow.scar.site</p>
         </Link>
       </footer>
     </div>
